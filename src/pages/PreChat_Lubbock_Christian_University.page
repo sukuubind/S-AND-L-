@@ -1,0 +1,104 @@
+<apex:page showHeader="false" controller="Pre_Chat_Form_Controller" id="LiveAgent_PreChatForm">
+<apex:includeScript value="{!$Resource.Placeholders_JS}"/>
+
+<apex:stylesheet value="{!$Resource.Lubbock_Christian_University_Chat_CSS}"/>
+
+<script type="text/javascript">
+window.resizeTo(620,550);
+</script>
+
+<apex:insert name="body">    
+
+<div class="headerSection">
+<apex:image id="headerLogo" styleClass="headerLogo" value="{!$Resource.Lubbock_Christian_University_Chat_Header_Logo}" />
+<apex:image id="headerChatBubbles" styleClass="headerChatBubbles" value="{!$Resource.Lubbock_Christian_University_Chat_Header_ChatBubbles}" />
+</div>
+
+<div class="prechatForm">
+
+<table width="100%">
+    <tr>
+    <td class="tdFormSection">
+        <div class="titleSection">
+            {!$Label.Lubbock_Christian_University_LiveChat_Pre_Title}
+        </div>
+
+        <div class="subtitleSection">
+            {!$Label.LiveChat_Pre_Subtitle}
+        </div>
+
+        <apex:form id="prechatForm">
+                <div>
+                    <apex:inputText id="fname" value="{!firstName}" styleClass="inputSection" html-placeholder=" First Name" html-autofocus="true"/>
+                </div>
+                
+                <div>
+                    <apex:inputText value="{!lastName}" styleClass="inputSection" html-placeholder=" Last Name"/>
+                </div>
+                
+                <div>
+                    <apex:inputText value="{!email}" styleClass="inputSection" html-placeholder=" Email"/>
+                </div>
+                <div>
+                     <apex:commandButton value="{!$Label.LiveChat_Pre_StartChatBtn}" styleClass="buttonSection" action="{!checkInputs}" id="checkInputsLink" rerender="errorMessages, prechatformPanel">
+                        <apex:param name="organization" value="LCU" assignTo="{!organization}"/>
+                     </apex:commandButton>                                    
+                </div>
+        </apex:form>
+    </td>
+    <td class="tdImgSection">
+        <apex:image id="insetImg" styleClass="preChatInsetImgSection" value="{!$Resource.Lubbock_Christian_University_Chat_Inset}"/>
+    </td>
+    </tr>
+</table>  
+
+<div>
+<apex:outputPanel id="errorMessages">
+<apex:outputPanel rendered="{!renderErrorMessages}">
+   <div class="errorMessagesSection"> {!errorMessages} </div>   
+ </apex:outputPanel>
+ </apex:outputPanel>
+</div>
+
+
+<div>
+<apex:outputPanel id="prechatformPanel">
+<apex:outputPanel rendered="{!renderPreChatForm}">
+    <form method='post' id='prechatForm' action="{!endpoint}">
+    <input class="inputSection" type="hidden" name="liveagent.prechat:FirstName" value="{!firstName}" />
+    <input class="inputSection" type="hidden" name="liveagent.prechat:LastName" value="{!lastName}" />
+    <input class="inputSection" type="hidden" name="liveagent.prechat:Email" value="{!email}" />
+    <input class="inputSection" type="hidden" name="liveagent.prechat:Partner" value="Lubbock Christian University" />
+    <input class="inputSection" type="hidden" name="liveagent.prechat:OrganizationID" value="0016000000WMxmi" />
+    
+    <input type="hidden" name="liveagent.prechat:opportunityId" id="opportunityId" value="{!opportunityId}"/>    
+    <input type="hidden" name="liveagent.prechat.findorcreate.map:Opportunity" value="Id,opportunityId;"/>
+    <input type="hidden" name="liveagent.prechat.findorcreate.map.isExactMatch:Opportunity" value="Id, true;"/>
+    <input type="hidden" name="liveagent.prechat.findorcreate.map.doFind:Opportunity" value="Id, true;"/> 
+    <input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Opportunity" value="true"/>
+    <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Opportunity" value="Opportunity__c"/>
+    <input type="hidden" name="liveagent.prechat.save:FirstName" value="First_Name__c"/>
+    <input type="hidden" name="liveagent.prechat.save:LastName" value="Last_Name__c"/>
+    <input type="hidden" name="liveagent.prechat.save:Email" value="Email__c"/>
+    <input type="hidden" name="liveagent.prechat.save:Partner" value="Partner_Name__c"/>
+    <input type="hidden" name="liveagent.prechat.save:OrganizationID" value="Account"/>  
+    
+    </form>
+
+    <script type="text/javascript">
+        document.getElementById('prechatForm').submit(); // SUBMIT FORM    
+    </script>
+</apex:outputPanel>
+</apex:outputPanel>
+</div>
+    
+</div>
+
+<div class="footerSection">
+
+</div>
+
+
+</apex:insert>
+
+</apex:page>

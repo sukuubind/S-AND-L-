@@ -1,0 +1,31 @@
+<apex:page controller="FindAllObjects" showheader="true" sidebar="true"  renderas="{!pdf}">
+<apex:form >
+    <apex:pageBlock title="ALL OBJECTS ({!allObjectCount}) ">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!downloadPDF}" value="Download PDF"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection title="Standard Object ({!standardObjectCount})">
+            <apex:pageBlockTable value="{!standardObjectNames}" var="thisVal">
+                <apex:column value="{!thisVal}"/> <br/>
+                </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         <apex:pageBlockSection title="Custom Object ({!customObjectCount})">
+            <apex:pageBlockTable value="{!customObjectNames}" var="thisVal">
+                <apex:column value="{!thisVal}"/> <br/>
+                </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         <apex:pageBlockSection title="Share Object ({!shareObjectCount})">
+            <apex:pageBlockTable value="{!shareObjectNames}" var="thisVal">
+                <apex:column value="{!thisVal}"/> <br/>
+                </apex:pageBlockTable>
+         </apex:pageBlockSection>
+         <apex:pageBlockSection title="History Object ({!historyObjectCount})">
+            <apex:pageBlockTable value="{!historyObjectNames}" var="thisVal">
+                <apex:column value="{!thisVal}"/> <br/>
+                </apex:pageBlockTable>
+         </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+
+
+</apex:page>

@@ -1,0 +1,128 @@
+<apex:page standardcontroller="DeltakSRP__Student_Online_Application__c" extensions="SRPPrintProgramPageConfigs" renderAs="pdf" showHeader="false" sidebar="false">
+<apex:pageBlock >
+
+<apex:repeat value="{!appDetails}" var="app">
+    <apex:pageBlock >
+       
+         <table>
+            <tr>
+                <td>
+                    <b>Applicant Name:</b>
+                </td>
+                <td>
+                    <apex:outputText value="{!app.DeltakSRP__Affiliation__r.Name}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Application Number:</b>
+                </td>
+                <td>
+                    <apex:outputText value="{!app.Name}"/>
+                </td> 
+            </tr>
+            <tr> 
+                <td>
+                    <b>Academic Program:</b>
+                </td>
+                <td>
+                    <apex:outputText value="{!app.DeltakSRP__Academic_Program__r.DeltakSRP__Program_Title__c}"/>
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <b>Term:</b>
+                </td>
+                <td>
+                   <!-- <apex:outputField value="{!app.DeltakSRP__Academic_Start_Date__r.DeltakSRP__Start_Date__c}" /> -->
+                    <apex:outputField value="{!app.DeltakSRP__Academic_Start_Date__r.DeltakSRP__Online_Application_Label__c}" />
+
+                </td>
+            </tr>
+            </table>
+        <br/>
+        <br/>  
+           
+           
+        <apex:pageBlockSection columns="1">             
+            <apex:repeat value="{!distpageConfigName}" var="key">
+                <b> <apex:outputLabel value="{!key}" styleClass="TableTitle"/> </b> 
+                <div style="border-bottom: 0.5px solid;width:300%;margin-bottom:10px;"></div>       
+                <br/>
+                
+               <apex:repeat value="{!dispOrderedData[key]}" var="k">               
+          <!--         <apex:outputLabel value="{!k} : " escape="false"/>  -->   
+                    <apex:outputLabel value="{!dispDataLabel[key][k]}" escape="false" /> 
+                     <apex:outputLabel value="{!displayShortData[key][k]}" escape="false" rendered="{!displayShortData[key][k] != null && displayShortData[key][k] != ''}" /> 
+                      <apex:outputLabel value="{!displayLongData[key][k]}" escape="false"/>  
+                      
+                    <b> <apex:outputLabel value="{!displayData[key][k]}" escape="false" /> </b>   
+                    <br/>  
+                           
+                    
+                     
+                </apex:repeat>  
+            </apex:repeat>              
+        </apex:pageBlockSection> 
+        
+         <apex:outputPanel rendered = "{!refNames.size > 0}">
+         <apex:pageBlockSection columns="1">         
+          <b>  <apex:outputLabel value="Student References"/>      </b>
+            <div style="border-bottom: 0.5px solid;width:600%;margin-bottom:10px;"></div>       
+                <br/>
+                <apex:repeat value="{!refNameToRefEmail}" var="nm">                  
+                <apex:outputLabel value="{!nm} : " />
+                <apex:repeat value="{!refNameToRefEmail[nm]}" var="eml">
+            <b> <apex:outputText value="{!eml}" /> </b>  <br/>
+                </apex:repeat>
+        </apex:repeat>  
+        </apex:pageBlockSection>   
+        </apex:outputPanel> 
+       
+        <apex:outputPanel rendered = "{!distpageConfigNameList.size > 0}">
+            <apex:pageBlockSection columns="1"> 
+               
+                <apex:repeat value="{!tupleName_Id}" var="tup1"> 
+                   <apex:variable value="{!tup1}" var="keyL"/>
+             <!--         <b> <apex:outputLabel value="{!tup}"/> </b> -->
+                    <!-- <apex:repeat value="{!tup1}" var="keyL"   > -->
+                    
+                    
+                        <b> <apex:outputLabel value="{!tupleNametoPageconfigName[tup1]}"/> </b>
+                         <div style="border-bottom: 1px solid;width:333%;margin-bottom:10px;"></div>  
+                        <apex:repeat value="{!dispOrderedDataList[keyL]}" var="kL" >
+                           
+                            <apex:repeat value="{!displayDataList[keyL][kL]}" var="valL"> 
+                            <apex:outputPanel >
+                                <apex:outputLabel value="{!kL} : "  escape="false"/> 
+                                
+                                <apex:outputLabel value="{!displayShortDataList[keyL][kL]}" escape="false" />
+                      <apex:outputLabel value="{!displayLongDataList[keyL][kL]}" escape="false"/>   <br/>
+                      
+                       <b>         <apex:outputLabel value="{!valL}" /> </b> <br/>
+                                
+                              
+                            </apex:outputPanel>   
+                            </apex:repeat>  
+                        </apex:repeat>  <br/>           
+                    </apex:repeat>
+              <!--  </apex:repeat> -->
+                
+            </apex:pageBlockSection>    
+        </apex:outputPanel>
+         
+        <apex:repeat value="{!submissionText}" var="txt"> 
+            <apex:outputPanel rendered="{!txt.DeltakSRP__Submission_Text__c != null }">     
+                <b><apex:outputLabel value="Attestation"/></b>
+                <div style="border-bottom: 0.5px solid;width:1000%;margin-bottom:10px;"></div><br/>
+                <apex:outputLabel value="{!txt.DeltakSRP__Submission_Text__c}"/>
+            </apex:outputPanel>
+        </apex:repeat>
+        
+        
+        
+    </apex:pageBlock>
+ </apex:repeat>   
+</apex:pageBlock>
+ 
+ </apex:page>

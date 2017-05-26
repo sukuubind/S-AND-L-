@@ -1,0 +1,4 @@
+<apex:component >
+<apex:stylesheet value="{!URLFOR($Resource.ProspectCSS)}"/>
+<apex:image id="theImage" value="{!$Resource.ProspectLogo}" width="473" height="112"/>
+</apex:component>

@@ -1,0 +1,147 @@
+<apex:page controller="SrmToSrpDataMigration" tabStyle="Account"> 
+
+<apex:form > 
+
+<apex:pageBlock > 
+
+<apex:outputPanel id="messages">
+	<apex:pageMessages />
+</apex:outputPanel>
+
+ <apex:pageBlockButtons >
+                <apex:commandButton action="{!runBatchUpdate}" value="Run Migration" rerender="migrationPoller,chatterfeed,messages,messages2"/>
+ </apex:pageBlockButtons>
+            
+<apex:pageBlockSection title="Select Organization and Email Notification Recipients" columns="1">
+<apex:inputfield value="{!dummyContact.AccountId}" required="true"/>
+
+<apex:inputField value="{!dummyContact.Comments__c}" Label="Notification Email Addresses (Separate with Commas: 1@email.com,2@email.com,3@email.com)" style="width:100%;height:20px;"/>
+
+</apex:pageBlockSection>
+
+<apex:outputpanel id="selection">
+<apex:pageBlockSection title="Select One object to migrate" columns="2">
+
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updatePerson}" id="updatePerson"/>
+<apex:outputLabel value="Person" for="updatePerson"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateUsers}" id="updateUsers"/>
+<apex:outputLabel value="User" for="updateUsers"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateCampaigns}" id="updateCampaigns"/>
+<apex:outputLabel value="Campaign" for="updateCampaigns"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateActivities}" id="updateActivities"/>
+<apex:outputLabel value="Activity" for="updateActivities"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateTasks}" id="updateTasks"/>
+<apex:outputLabel value="Tasks" for="updateTasks"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateAffliations}" id="updateAffliations"/>
+<apex:outputLabel value="Affliation (Contact)" for="updateAffliations"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateOpportunities}" id="updateOpportunities"/>
+<apex:outputLabel value="Opportunity" for="updateOpportunities"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateAcademicPrograms}" id="updateAcademicPrograms"/>
+<apex:outputLabel value="Academic Programs" for="updateAcademicPrograms"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateAcademicSpecialization}" id="updateAcademicSpecialization"/>
+<apex:outputLabel value="Academic Specialization" for="updateAcademicSpecialization"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateAcademicStartDate}" id="updateAcademicStartDate"/>
+<apex:outputLabel value="Academic StartDate" for="updateAcademicStartDate"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateFiscalCalendar}" id="updateFiscalCalendar"/>
+<apex:outputLabel value="Fiscal Calendar" for="updateFiscalCalendar"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateProgramAdmissionDocs}" id="updateProgramAdmissionDocs"/>
+<apex:outputLabel value="Program Admission Docs" for="updateProgramAdmissionDocs"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateProgramAdmissionsTemplate}" id="updateProgramAdmissionsTemplate"/>
+<apex:outputLabel value="Program Admissions Template" for="updateProgramAdmissionsTemplate"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateEnrollementData}" id="updateEnrollementData"/>
+<apex:outputLabel value="Student Enrollment" for="updateEnrollementData"/>
+</apex:pageblocksectionitem>
+
+<apex:pageblocksectionitem >
+<apex:inputCheckbox value="{!updateGMTOSFPrograms}" id="updateGMTOSFPrograms"/>
+<apex:outputLabel value="Goldmine to SF Programs" for="updateGMTOSFPrograms"/>
+</apex:pageblocksectionitem>
+
+</apex:pageBlockSection>
+</apex:outputpanel>
+
+<apex:pageBlockSection title="Chatter Feed Refresh Status" columns="2">
+		<apex:pageBlockSectionItem helpText="Chatter Feed refresh Status.">
+			Status
+			<apex:outputText Label="Status ">
+				<apex:actionStatus startText="Refreshing..." stopText="Waiting to Refresh" id="refreshStatus"/>
+			</apex:outputText>
+		</apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+
+<apex:outputPanel id="migrationPoller">
+		<apex:actionPoller action="{!refreshBatchStatus}" rendered="{!renderMigrationPoller}" reRender="migrationPoller, chatterfeed,messages,messages2" status="refreshStatus" interval="5"/>
+</apex:outputPanel>
+
+<apex:outputPanel id="messages2">
+	<apex:pageMessages />
+</apex:outputPanel>
+
+</apex:pageBlock>
+
+</apex:form>
+
+<apex:outputPanel id="chatterfeed" rendered="{!renderChatterFeed}">
+	<script>
+			var batchStatus = '{!currBatchProcessStatus}';
+	</script>
+	<apex:pageBlock >
+	<apex:pageBlockSection title="Most Recent Batch Information" columns="2">
+		<apex:pageBlockSectionItem > 
+			<apex:outputText value="Batch Id"/> 
+			<apex:outputText value="{!currBatchProcessId}"/>
+		</apex:PageBlockSectionItem>
+		<apex:pageBlockSectionItem >	 
+			<apex:outputText value="Batch Status"/>
+			<apex:outputText value="{!currBatchProcessStatus}"/>
+		</apex:pageBlockSectionItem>
+	</apex:pageBlockSection>
+	</apex:pageBlock>
+	<chatter:feed entityId="{!chatterFeedId}"/>
+</apex:outputPanel>
+
+
+
+
+</apex:page>

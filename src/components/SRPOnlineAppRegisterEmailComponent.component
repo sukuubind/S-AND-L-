@@ -1,0 +1,6 @@
+<apex:component controller="SRPOnlineAppRegisterEmailController" access="global">
+	<apex:attribute description="Opportunity Id" Type="Id" assignTo="{!OppId}" Name="OpportunityId"/>
+	{!Opp.DeltakSRP__Student__r.Name} has registered for the Online Application. To view their progress, click the following link 
+	<br/><br/> 
+	https://cs10.salesforce.com/{!Opp.Id}
+</apex:component>

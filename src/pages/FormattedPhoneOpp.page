@@ -1,0 +1,10 @@
+<apex:page sidebar="false" showHeader="false" StandardController="Opportunity" extensions="FormattedPhoneOppController">
+<apex:stylesheet value="{!$Resource.FormattedPhone}"/>
+ 
+
+      <div >
+        
+           <apex:outputText escape="false" label="Preferred Phone" value="{!oppty.Formatted_Phone__c}" styleClass="activeStyle" />
+
+       </div>
+</apex:page>

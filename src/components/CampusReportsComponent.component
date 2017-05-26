@@ -1,0 +1,75 @@
+<apex:component controller="ReportsComponentController" access="global">
+<apex:attribute name="emailId" assignTo="{!emailAddress}" type="String" description="Email Address To Send Report"/>
+Please do not reply to this email.
+<apex:dataTable value="{!oppList}" var="opp" rowClasses="odd,even" styleClass="tableClass">
+        <apex:column >
+                <apex:facet name="header">Degree Type</apex:facet>
+                <apex:outputText value="{!opp.Program_Degree_Type__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Program Name</apex:facet>
+                <apex:outputText value="{!opp.Program__r.Program_Title__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Specialization Name</apex:facet>
+                <apex:outputText value="{!opp.Specialization__r.Spec_Title__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student First Name</apex:facet>
+                <apex:outputText value="{!opp.Student__r.FirstName}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Last Name</apex:facet>
+                <apex:outputText value="{!opp.Student__r.LastName}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Email</apex:facet>
+                <apex:outputText value="{!opp.Student__r.Email}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Phone 1</apex:facet>
+                <apex:outputText value="{!opp.Student__r.HomePhone}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Phone 2</apex:facet>
+                <apex:outputText value="{!opp.Student__r.Work_Phone__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Country</apex:facet>
+                <apex:outputText value="{!opp.Mailing_Country__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student State</apex:facet>
+                <apex:outputText value="{!opp.Mailing_State__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">How did you hear about us?</apex:facet>
+                <apex:outputText value="{!opp.How_Heard_Detail__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Messaging Service</apex:facet>
+                <apex:outputText value="{!opp.IM_Type__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Messaging Name</apex:facet>
+                <apex:outputText value="{!opp.IM_Username__c}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Ok to Text?</apex:facet>
+                <apex:outputText value="{!opp.OK_to_Text__c}"/>
+        </apex:column>
+    </apex:dataTable>
+</apex:component>

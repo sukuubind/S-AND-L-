@@ -1,0 +1,63 @@
+<apex:page controller="MMSMSKeylinkController" action="{!initPage}" contentType="text/html" >
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <script>
+        var jq = jQuery.noConflict();
+        var ddlTableList = null;
+        var ddlFieldList = null;
+        var txtMergeField = null;
+        jq(document).ready(function() {
+            jq('div.pbSubheader').css('background-color','#1797C0');
+        });
+        var getStrippedComponentId = function(id){
+            return id.replace(/:/g,'\\:');
+        };
+    </script>
+    <apex:form id="mainFormKeyLink">
+        <apex:pageBlock title="MMSMS Keylink Setup" id="mainPB">
+            <apex:pageMessages showDetail="false" escape="true"/>
+            <apex:pageBlockButtons id="pbButtons">
+                    <apex:commandButton value="Save" action="{!saveKeylink}"/> 
+                    <apex:commandButton value="Delete" action="{!deleteKeylink}" disabled="{!btnDeleteDisabled}" onclick="return confirm('Are your sure?')" /> 
+                    <apex:commandButton value="Cancel" action="{!onCancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="false" id="KeywordSection" title="Keyword" columns="1">
+               <apex:pageBlockSectionItem id="KeywordItem">
+                    <apex:outputLabel value="Keyword" for="keyword"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="keywordPanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText id="keyword" style="width:200px" value="{!keyword}" />   
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="CreateAffiliationItem">
+                    <apex:outputLabel value="Create Affiliation" for="createAffiliation"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="createAffiliationPanel">
+                        <apex:inputCheckbox id="createAffiliation" selected="{!createAffiliation}" />
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="CreateOpportunityItem">
+                    <apex:outputLabel value="Create Opportunity" for="createOpportunity"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="createOpportunityPanel">
+                        <apex:inputCheckbox id="createOpportunity" selected="{!createOpportunity}" />
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="NotifyToItem">
+                    <apex:outputLabel value="Notify To" for="notifyTo"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="requiredInputPanel">
+                        <apex:selectList id="notifyTo" value="{!notifyTo}" size="1" multiselect="false">
+                            <apex:selectOptions value="{!userList}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="IsActiveItem">
+                    <apex:outputLabel value="Is Active" for="isActive"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="isActivePanel">
+                        <apex:inputCheckbox id="isActive" selected="{!isActive}" />
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <div style="text-align:left;margin-bottom:10px;margin-top:10px;">
+                    <a href="{!keylinkAttrUrl}" target="_top" class="labelCol">Show Keylink Attributes List</a>
+                </div>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

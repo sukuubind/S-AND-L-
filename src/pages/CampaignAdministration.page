@@ -1,0 +1,62 @@
+<apex:page action="{!campaignsExisting}" controller="CampaignAdministrationController" >
+    <apex:form >
+       
+        <apex:messages />
+       
+
+            <apex:inputText value="{!searchText}" />
+            <apex:commandButton value="Search Campaigns" action="{!campaignSearch}" >
+                <apex:actionSupport event="onClick" immediate="false" rerender="campaignList"/>
+            </apex:commandButton>
+           
+            <br/><br/>
+
+        <apex:pageBlock title="Campaigns matching search" > 
+         <apex:outputPanel id="campaignList">
+           <table border = "2" width="100%">     
+             <th>Name shown on dropdown</th>
+             <th>Campaign Name</th>
+             <th>Campaign Code</th>
+             <th></th>     
+            <apex:repeat value="{!campaigns}" var="item">
+                <tr>                        
+                    
+                    <c:CampaignComponent campaignCode="{!item.Campaign_Code__c}"
+                        campaignName="{!item.Name}"
+                        campaignId="{!item.Id}"                   
+                    />
+                </tr>
+             </apex:repeat>
+             </table>
+         </apex:outputPanel>
+
+       </apex:pageblock>
+      
+        
+          <br/><br/>
+           <apex:commandButton value="Refresh" action="{!campaignsExisting}"
+               image="{!$Resource.Refresh}">
+            <apex:actionSupport event="onClick" immediate="false" rerender="campaignList,campaignListPickList"/>
+        </apex:commandButton>
+<apex:pageBlock title="Campaigns in picklist" >   
+        <apex:outputPanel id="campaignListPickList">
+            <table border = "1" width="100%" cellpadding = "2" cellspacing="2">
+                       
+             <th>Campaign Name</th>
+             <th>Campaign Code</th>
+             <th></th>     
+           
+            <apex:repeat value="{!pickListValues}" var="item">
+                <tr>                            
+                    <c:CampaignComponentRemove campaignCode="{!item.Campaign_Code__c}"
+                        campaignName="{!item.Name}"
+                        campaignId="{!item.Id}"                   
+                    />
+                </tr>
+             </apex:repeat>
+            </table>
+         </apex:outputPanel>
+    </apex:pageBlock>
+   
+    </apex:form>
+</apex:page>

@@ -1,0 +1,23 @@
+<apex:page showHeader="false" id="LiveAgent_ChatForm">
+
+<apex:insert name="body">
+
+<apex:sectionHeader title="UoB Live Agent"/>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<img id="liveagent_button_online_57332000000PBhv" style="display: none; border: 0px none; cursor: pointer" onclick="liveagent.startChat('57332000000PBhv')" src="https://learn-today.secure.force.com/liveagent/resource/1482866572000/University_of_Birmingham_Chat_OnlineButton" />
+<img id="liveagent_button_offline_57332000000PBhv" style="display: none; border: 0px none; " src="https://learn-today.secure.force.com/liveagent/resource/1482866572000/University_of_Birmingham_Chat_OfflineButton" /> </p>
+<script type="text/javascript">
+if (!window._laq) { window._laq = []; }
+window._laq.push(function(){liveagent.showWhenOnline('57332000000PBhv', document.getElementById('liveagent_button_online_57332000000PBhv'));
+liveagent.showWhenOffline('57332000000PBhv', document.getElementById('liveagent_button_offline_57332000000PBhv'));
+});</script>
+
+<script type='text/javascript' src='https://c.la4-c1-was.salesforceliveagent.com/content/g/js/38.0/deployment.js'></script>
+<script type='text/javascript'>
+liveagent.init('https://d.la4-c1-was.salesforceliveagent.com/chat', '57232000000PBXK', '00D60000000JELK');
+</script>
+
+
+</apex:insert>
+</apex:page>

@@ -1,0 +1,127 @@
+<apex:page standardcontroller="Account"  extensions="ProspectAdminFlowController" showheader="false" sidebar="false">
+<c:ProspectHeader />
+<script>
+	function confirmCancel()
+	{
+		var isCancel = confirm("Do you wish to cancel?");
+		if (isCancel) 
+		{
+			window.top.close();
+			return true;
+		}
+		else
+		{
+			return false; 
+		}
+		return false;
+	}
+	
+	function confirmDelete()
+	{
+		var isDelete = confirm("Do you wish to delete the chosen team?");
+		if (isDelete) 
+		{
+			deleteTeam();
+			
+			return true;
+		}
+		else
+		{
+			return false; 
+		}
+		return false;
+	}
+	
+</script>
+  
+<apex:form >
+
+<apex:actionFunction name="validateRadio" action="{!validateRadio}" rerender="teamList"/>
+<apex:actionFunction name="rerenderTeams" action="{!deleteTeam}" rerender="teamList"/>
+	<apex:pageBlock id="teamList" >
+	
+		<c:ProspectPageHeader styleClass="pageHeader" stepValue="Step 1 of 4" required="true" acctName="{!acctName}" VFPageName="Step1"/>
+		
+		<br/>
+		<apex:outputPanel styleClass="prospectText">
+		<apex:pageMessages rendered="{!isError}"/>
+		</apex:outputPanel>
+		
+		<div align="center">
+          	<apex:commandButton action="{!step2Create}" value="Create Team" styleClass="buttons"/>
+         	<apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+		</div><br/>
+	
+		<apex:outputPanel id="DefaultTeam">
+ 		<apex:outputLabel for="defaultTeamName" value="Default Team: "/> <apex:outputText id="defaultTeamName" value="{!defaultTeamName}"/>
+ 		</apex:outputPanel>
+ 		<br/>
+	
+	<apex:outputPanel >
+ 		<apex:outputPanel id="teams" >
+ 	
+ 		<apex:commandButton value="Select" action="{!step2Choose}" styleClass="buttons"/>
+		<apex:commandButton value="Clone" action="{!step2Clone}" styleClass="buttons"/>
+		<apex:commandButton value="Delete" action="{!deleteTeam}" styleClass="buttons"/>
+		<apex:commandButton value="Choose as Default Team" action="{!selectDefault}" styleClass="buttons" rerender="DefaultTeam"/>
+		<!-- 
+		<apex:commandButton value="Delete" styleClass="buttons"
+			onclick="return confirmDelete()" immediate="true"/>
+		 -->
+		
+			<br/><br/>
+ 			
+ 			<apex:outputText value="Choose a Team or Create new Team" styleClass="pageblockTable" style="width:50%"/>
+ 			
+ 			<apex:selectRadio id="checkRadio" value="{!selectedTeam}" layout="pageDirection" style="width:1000px;">
+            	<apex:selectOptions value="{!selectTeams}"/>
+            </apex:selectRadio><p/>
+			<!-- <apex:commandButton value="Select" action="{!step2Choose}"/>  -->
+		     
+		
+		<apex:commandButton value="Select" action="{!step2Choose}" styleClass="buttons"/>
+		<apex:commandButton value="Clone" action="{!step2Clone}" styleClass="buttons"/>
+		<apex:commandButton value="Delete" action="{!deleteTeam}" styleClass="buttons"/>
+		<apex:commandButton value="Choose as Default Team" action="{!selectDefault}" styleClass="buttons" rerender="DefaultTeam"/>
+	</apex:outputPanel> 
+	<!-- 
+	<apex:outputPanel style="float:right;padding-right:50px;">
+		<apex:outputLabel styleclass="control-label" value="Team Name" rendered="{!chooseTeam}" />
+			<apex:inputText styleClass="form-control" value="{!teamName}" rendered="{!chooseTeam}" />
+        	
+		<apex:outputPanel id="ChosenTeam" rendered="{!chooseTeam}" >
+		<br/><br/>
+			<apex:outputText value="Members in Team" styleClass="pageblockTable"/>
+			<apex:selectCheckboxes value="{!selectedMembers}" layout="pageDirection">
+            	<apex:selectOptions value="{!selectTeamMembers}" /><br/>
+        	</apex:selectCheckboxes><br/>	<br/>
+        </apex:outputPanel>
+        		
+        <apex:outputPanel id="OtherUsers" rendered="{!chooseTeam}" >
+        	<apex:outputText value="Members available to add" styleClass="pageblockTable"/>
+        	<apex:selectCheckboxes value="{!allOtherUsers}" layout="pageDirection">
+           		<apex:selectOptions value="{!selectOtherUsers}"/><br/>
+        	</apex:selectCheckboxes><br/> 
+		</apex:outputPanel>
+			
+		<div align="center">
+          	<apex:commandButton action="{!step1}" value="Previous" styleClass="buttons"/>
+			<apex:commandButton action="{!step3}" value="Next" styleClass="buttons"/>
+	        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+		</div>
+	</apex:outputPanel>
+	 --> 
+	
+	</apex:outputPanel>	
+		<div align="center">
+          <apex:commandButton action="{!step2Create}" value="Create Team" styleClass="buttons"/>
+          <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+		</div>
+	</apex:pageBlock>
+
+</apex:form>
+
+</apex:page>

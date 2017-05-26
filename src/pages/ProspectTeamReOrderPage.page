@@ -1,0 +1,80 @@
+<apex:page standardcontroller="Account"  extensions="ProspectTeamReOrderController" showheader="false" sidebar="false">
+  <c:ProspectHeader /> 
+  <script>
+    function confirmCancel()
+    {
+        window.top.close();
+            return true;
+    }
+    
+</script>
+<style>
+.arrow-up {
+    width: 0; 
+    height: 0; 
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    margin: 0 0 5px 0;
+    border-bottom: 7px solid #F5822B;
+    
+}
+
+.arrow-down {
+    width: 0; 
+    height: 0; 
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    margin: 0 0 5px 0;
+    border-top: 7px solid #818285;
+}
+.columnText{
+font-family: Motion Control;
+font-weight: bold;
+font-size: 18px;
+color: #818285;
+}
+tr.headerRow .TableTitle {
+color: #818285 !important; 
+font-size: 14px !important;
+}
+
+</style>
+ <apex:outputPanel >
+ <apex:pageBlock > 
+    <c:ProspectPageHeader styleClass="pageHeader" stepValue="{!account.Name} Teams Re-Order" required="true" acctName="{!account.Name}" VFPageName=""/>  <br/>
+    <apex:form >
+       
+       <apex:actionFunction name="moveTeamUp" action="{!moveTeamUp}" rerender="rerenderTeamsList">
+        <apex:param name="q" assignTo="{!teamIdToWorkWith}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="moveTeamDown" action="{!moveTeamDown}" rerender="rerenderTeamsList">
+        <apex:param name="q" assignTo="{!teamIdToWorkWith}" value=""/>
+    </apex:actionFunction>
+      <div align="center">
+       <apex:commandButton action="{!cancel}" value="Close" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+                              </div>
+       <apex:outputPanel id="rerenderTeamsList" style="align:center">
+       <apex:pageBlockTable id="teamsList" value="{!teamInfoList}" var="name" width="500px;" columns="3"   >
+           <apex:column width="40px;" headerValue="Move Up/Down" styleClass="columnText" headerClass="TableTitle">
+           
+           <apex:image id="moveteamUp" onclick="moveTeamUp('{!name.teamId}');" value="{!$Resource.ProspectArrowUp}" width="50" height="50" rendered="{!name.prevTeamOrder != -1}"/>
+          <apex:image id="moveteamdown" onclick="moveTeamDown('{!name.teamId}');" value="{!$Resource.ProspectArrowDown}" width="50" height="50" rendered="{!name.nextTeamOrder != 100000}"/> 
+           </apex:column>
+           <apex:column width="40px;" headerValue="Team Order #" headerClass="TableTitle">
+            <apex:outputLabel value="{!name.currentTeamOrder}"/>
+            </apex:column>
+           <apex:column headervalue="Team Name" headerClass="TableTitle">
+                <apex:outputLabel value="{!name.TeamName}"/>
+           </apex:column>
+           
+       </apex:pageBlockTable> 
+       </apex:outputPanel>
+       <div align="center">
+       <apex:commandButton action="{!cancel}" value="Close" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+                              </div>
+</apex:form>      
+</apex:pageBlock>
+</apex:outputPanel>
+</apex:page>

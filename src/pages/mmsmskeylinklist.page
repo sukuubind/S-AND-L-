@@ -1,0 +1,15 @@
+<apex:page controller="MMSMSKeylinkListController">
+  <apex:pageBlock title="MMSMS Keylink List" >
+        <apex:outputLink value="/apex/mmsmskeylink">New Keylink Setup</apex:outputLink>
+        <apex:pageBlockTable value="{!keylinkList}" var="o">
+            <apex:column HeaderValue="Action">
+                <apex:outputLink value="/apex/mmsmskeylink?id={!o.Id}&type=edit">Edit</apex:outputLink>
+            </apex:column>
+            <apex:column value="{!o.Keyword__c}"/>
+            <apex:column value="{!o.CreateAffliliation__c}"/>
+            <apex:column value="{!o.CreateOpportunity__c}"/>
+            <apex:column value="{!o.NotifyTo__c}"/>
+            <apex:column value="{!o.IsActive__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

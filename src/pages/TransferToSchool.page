@@ -1,0 +1,338 @@
+<apex:page showheader="true" sidebar="true" standardController="Opportunity" extensions="TransferToSchoolController" >
+	<apex:form >
+		<apex:pageBlock title="Transfer To School Form" mode="view">
+		 
+			<apex:pageBlockButtons >
+				<apex:commandButton onclick="return validate();" action="{!saveOpp}" value="Save"/>
+				<apex:commandButton action="{!cancel}" value="Cancel"/>
+	        </apex:pageBlockButtons>
+	        
+	        <apex:pageBlockSection title="Personal Information" columns="1">
+	        	<apex:pageBlockSectionItem >                    
+                    Name <font color="red">*</font> 
+                    <apex:inputText value="{!StudentName}" id="opp__name"> 
+                         <script type="text/javascript">
+                            function validate_name()
+                            {   var alerttxt = 'Please enter the student\'s name';
+                                var x=document.getElementById('{!$Component.opp__name}');
+                                //alert(x.value);
+                                if (x.value.length<2) 
+                                {
+                                    alert(alerttxt);
+                                    return false;
+                                }
+                                else   
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }       
+                        </script>
+                    </apex:inputText>
+                </apex:pageBlockSectionItem>
+                
+	        
+		        <apex:pageBlockSectionItem >	            
+		            Campus <font color="red">*</font>
+		            <apex:outputPanel id="campusPanel"  >
+						 
+					            <apex:selectList id="campusPicklist" value="{!campusId}" size="1">
+					                <apex:selectOptions value="{!campuses}"/>
+									 
+									<apex:actionSupport event="onchange" action="{!campusChanged}" 
+					                                    status="programStatus" immediate="false" rerender="programPanel, specPanel" />
+				                    
+					                <script type="text/javascript">
+					                    function validate_campus( )
+					                    {   
+					                        var alerttxt = 'Please select a campus';
+					                        var x=document.getElementById('{!$Component.campusPicklist}');
+					                        //alert(x.value);
+					                        if (x.value=='-None-' || x.value=='' ) 
+					                        {
+					                            alert(alerttxt);
+					                            return false;
+					                        }
+					                        else   
+					                        {
+					                            return true;
+					                        }
+					                    }       
+					                </script>		               
+					            </apex:selectList>
+				         
+		            </apex:outputPanel>	          
+				</apex:pageBlockSectionItem>
+								 
+				<apex:pageBlockSectionItem >
+                    
+                    Program <font color="red">*</font>
+                    <apex:outputPanel id="programPanel">                                
+                        <apex:actionStatus id="programStatus" startText="(Loading programs...)">
+                            <apex:facet name="stop">
+                                
+                                <apex:selectList id="programPicklist" value="{!programId}" size="1">
+                                    <apex:selectOptions value="{!programs}"/>
+                                    <apex:actionSupport event="onchange" action="{!programChanged}" 
+                                        status="specStatus" rerender="programPanel, specPanel" immediate="false"/>
+                                    <script type="text/javascript">
+                                        function validate_program( )
+                                        {   
+                                            var alerttxt = 'Please select a program.';
+                                            var x=document.getElementById('{!$Component.programPicklist}');
+                                            //alert(x.value);
+                                            if (x.value=='-None-' || x.value=='' ) 
+                                            {
+                                                alert(alerttxt);
+                                                return false;
+                                            }
+                                            else   
+                                            {
+                                                return true;
+                                            }
+                                        }        
+                                    </script>
+                                </apex:selectList>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >                    
+                    Specialization <font color="red">*</font>
+                   <apex:outputPanel id="specPanel"  >
+                    	<apex:actionStatus id="specStatus" startText="(Loading specializations...}">
+                        	<apex:facet name="stop">            
+							<apex:selectList id="specPicklist" value="{!specializationId}" size="1">
+			                    <apex:selectOptions value="{!specializations}"/>				                   
+				                    <script type="text/javascript">
+				                        function validate_specialization( )
+				                        {   
+				                            var alerttxt = 'Please select a specialization.';
+				                            var x=document.getElementById('{!$Component.specPicklist}');
+				                            //alert(x.value);
+				                            if (x.value=='-None-' || x.value=='' ) 
+				                            {
+				                                alert(alerttxt);
+				                                return false;
+				                            }
+				                            else   
+				                            {
+				                                return true;
+				                            }
+				                        }       
+				                    </script>
+								</apex:selectList>
+							</apex:facet>
+						</apex:actionStatus>
+					</apex:outputPanel>
+                </apex:pageBlockSectionItem>
+			
+			
+				<apex:pageBlockSectionItem >                   
+                   Interested Timeframe <font color="red">*</font>
+                   <apex:selectList id="timeframe" value="{!selectedTimeframe}" size="1">
+                        <apex:selectOptions value="{!timeframeOptions}">
+                            <script type="text/javascript">
+                                function validate_timeframe( )
+                                {   
+                                    var alerttxt = 'Please select a timeframe.';
+                                    var x=document.getElementById('{!$Component.timeframe}');
+                                    //alert(x.value);
+                                    if (x.value=='-None-' || x.value==	'' || x.value== ' ' || x.value==null ) 
+                                    {
+                                        alert(alerttxt);
+                                        return false;
+                                    }
+                                    else   
+                                    {
+                                        return true; 
+                                    }
+                                }        
+                            </script>
+                        </apex:selectOptions>
+                    </apex:selectList>
+				</apex:pageBlockSectionItem>
+			 
+			 
+			 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Gender" for="gender"/>
+                 <apex:selectList id="gender" value="{!selectedGender}" size="1">
+                     <apex:selectOptions value="{!genderOptions}"/>                           
+                 </apex:selectList>
+             </apex:pageBlockSectionItem>
+		</apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Contact Information" columns="2">
+                <apex:pageBlockSectionItem >
+                    Email <font color="red">*</font>         
+                    <apex:inputText value="{!Email}" id="emailAdd">
+                        <script type="text/javascript">
+                            function validate_email( )
+                            {   
+                                var alerttxt = 'Email address is not formatted properly';
+                                var missingTxt = 'Please enter an email address ';
+                                var x=document.getElementById('{!$Component.emailAdd}');
+                                
+                               
+                                
+                                // only validate if there is something in the email field
+                                if (x.value.length>0) 
+                                {
+                                    //This is hte same Regex that we use for leadprocessor and rasID
+                                	var regex = new RegExp("^([a-z0-9+._-]+@)([a-z0-9-]+\\.)+(a(?:[cdefgilmnoqrstuwxz]|ero|(rp|si)a)$|(b([abdefghijmnorstvwyz]|iz))$|(c([acdfghiklmnoruvxyz]|at|o(m|op)))$|(d[ejkmoz])$|(e([ceghrstu]|du))$|(f[ijkmor])$|(g([abdefghilmnpqrstuwy]|ov))$|(h[kmnrtu])$|(i([delmnoqrst])|(n(fo|t)))$|(j([emop]|obs))$|(k[eghimnprwyz])$|(l[abcikrstuvy])$|(m([acdeghklmnopqrstuvwxyz]|il|obi|useum))$|(n([acefgilopruz]|ame|et))$|o(m|rg)$|(p([aefghklmnrstwy]|ro))$|(qa)$|(r[eosuw])$|(s[abcdeghijklmnortuvyz])$|(t([cdfghjklmnoprtvwz]|(rav)?el))$|(u[agkmsyz])$|(v[aceginu])$|(w[fs])$|(y[etu])$|(z[amw])$)+");
+                                	if (regex.test(x.value.toLowerCase())) {                                		
+                                		return true;
+                                	}	
+                                	else {
+                                		alert(alerttxt);
+                                        return false;
+                                	}
+                                }
+                                
+                                else
+                                {
+                                	alert(missingTxt);
+                                    return false;
+                                }
+                            }
+                            
+                            
+                        </script>
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+                
+                <apex:pageBlockSectionItem >
+                    Home Phone <font color="red">*</font>
+                    <apex:inputText value="{!Home_Phone}" id="Home_Phone">
+                        <script type="text/javascript">
+                            function validate_homephone()
+                            {   var alerttxt = 'The Home Phone number must be between 10-15 digits long.';
+                                var x=document.getElementById('{!$Component.Home_Phone}');
+                                //alert(x.value);
+                                if (x.value.length<10 || x.value.length>15) 
+                                {
+                                    alert(alerttxt);
+                                    return false;
+                                }
+                                else   
+                                {
+                                    return true;
+                                }
+                                
+                            }       
+                        </script>
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mobile Phone" for="Mobile_Phone"/>
+                    <apex:inputText value="{!Mobile_Phone}" id="Mobile_Phone">
+                    	<script type="text/javascript">
+                            function validate_mobilephone()
+                            {   
+                            	var alerttxt = 'The Mobile Phone number must be between 10-25 digits long.';
+                                var x=document.getElementById('{!$Component.Mobile_Phone}');
+                                //If there's nothing here, don't validate it. This field is not required
+                                if (x.value.length>0) 
+                                {
+	                                if (x.value.length<10 || x.value.length>25) 
+	                                {
+	                                    alert(alerttxt);
+	                                    return false;
+	                                }
+	                                else   
+	                                {
+	                                    return true;
+	                                }
+                                }
+                                
+                                else {
+                                	 return true;
+                                }
+                                
+                            }       
+                        </script>
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+                
+                <apex:pageBlockSectionItem >
+                    Work Phone 
+                    <apex:inputText value="{!Work_Phone}" id="Work_Phone">
+                        <script type="text/javascript">
+                            function validate_workphone()
+                            {   
+                            	var alerttxt = 'The Work Phone number must be between 10-15 digits long.';
+                                var x=document.getElementById('{!$Component.Work_Phone}');
+                                //If there's nothing here, don't validate it. This field is not required
+                                if (x.value.length>0) 
+                                {
+	                                if (x.value.length<10 || x.value.length>15) 
+	                                {
+	                                    alert(alerttxt);
+	                                    return false;
+	                                }
+	                                else   
+	                                {
+	                                    return true;
+	                                }
+                                }
+                                
+                                
+                                else {
+                                	 return true;
+                                }
+                                
+                            }       
+                        </script>
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+            </apex:pageBlockSection>      
+            
+             <apex:pageBlockSection title="Address Information" columns="1"> 
+             
+                 <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="Address" for="Address"/>
+                    <apex:inputText value="{!Address}" id="Address"/> 
+                </apex:pageBlockSectionItem>   
+                 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="City" for="City"/>
+                    <apex:inputText value="{!City}" id="City"/> 
+                </apex:pageBlockSectionItem> 
+                 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="State" for="State"/> 
+                    <apex:inputText value="{!State}" id="State"/> 
+                </apex:pageBlockSectionItem> 
+              
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Zip" for="Zip"/>
+                    <apex:inputText value="{!Zip}" id="Zip"/> 
+                </apex:pageBlockSectionItem>                  
+            </apex:pageBlockSection>
+            
+            
+        </apex:pageBlock>
+	</apex:form>
+	
+	<script type="text/javascript">
+        function gup( name )
+        {
+          name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+          var regexS = "[\\?&]"+name+"=([^&#]*)";
+          var regex = new RegExp( regexS );
+          var results = regex.exec( window.location.href );
+          if( results == null )
+            return "";
+          else
+            return results[1];
+        }
+        
+        function validate()
+        {   
+            return(validate_email() && validate_campus() && validate_program() && validate_timeframe() && validate_homephone()  &&  validate_mobilephone() && validate_workphone() && validate_specialization() );         
+        }
+    </script>
+    
+</apex:page>

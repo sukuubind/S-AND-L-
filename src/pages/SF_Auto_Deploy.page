@@ -1,0 +1,147 @@
+<apex:page sidebar="false" showHeader="true" StandardController="Automated_Deployment__c" extensions="SF_Auto_Deploy_Controller">
+<style>
+.publishercontainer, .feedcontainer
+{
+	max-width: 100% !important;
+}
+</style>
+
+<apex:form >
+<apex:outputPanel id="messages">
+	<apex:pageMessages />
+</apex:outputPanel>
+<apex:actionFunction action="{!deploy}" name="deploy" rerender="chatterfeed, messages, messages2, deployButtons, deployButtons2, deploymentPoller"/>
+<apex:actionFunction action="{!release}" name="release" rerender="chatterfeed, messages, messages2, deployButtons, deployButtons2, deploymentPoller"/>
+<apex:actionFunction action="{!doNothing}" name="doNothing" rerender="chatterfeed, deployButtons, deployButtons2"/>
+<apex:pageBlock >
+	
+	<apex:pageBlockButtons location="top">
+		<apex:outputPanel id="deployButtons">
+        	<apex:commandButton action="{!validate}" value="Deploy" rerender="result, messages, messages2, deployButtons, deployButtons2" rendered="{!showDepButton}" oncomplete="var deployConfirmationMsg = '';if('{!currAD.Deployment_Type__c}' == 'GIT to ORG'){deployConfirmationMsg = 'You are about to process a '; if('{!currAD.Check_Only__c}' == 'true'){deployConfirmationMsg += '(Check-Only) ';}deployConfirmationMsg += '{!currAD.Deployment_Type__c} deployment: \n\n From: {!currAD.Git_Repo__c} \n\n To: {!currAD.Destination_Org__c} ({!currAD.Destination_Org_Type__c}) ORG \n\n Using: {!selectedAttachmentName} metadata file. \n\n Please Confirm.'}else{deployConfirmationMsg = 'You are about to process a '; if('{!currAD.Check_Only__c}' == 'true'){deployConfirmationMsg += '(Check-Only) ';}deployConfirmationMsg += '{!currAD.Deployment_Type__c} deployment:\n\n From: {!currAD.Source_Org__c} ({!currAD.Source_Org_Type__c}) ORG \n\n To: {!currAD.Destination_Org__c} ({!currAD.Destination_Org_Type__c}) ORG \n\n Using: {!selectedAttachmentName} metadata file. \n\n Please Confirm.'};if('{!foundErrors}' == 'false' && confirm(deployConfirmationMsg)){deploy();}else{doNothing();}"/>
+    		<apex:commandButton action="{!validateRelease}" value="Release" rerender="messages, messages2, deployButtons, deployButtons2" rendered="{!showRelButton}" oncomplete="var releaseConfirmationMsg = 'You are about to cut a release for git repo {!currAD.Git_Repo__c} with: \n\n Version: {!releaseVersion} \n\n Comment: {!releaseComment} \n\n Please Confirm.'; if('{!releaseErrors}' == 'false' && confirm(releaseConfirmationMsg)){release();}else{doNothing();}"/>
+    	</apex:outputPanel>
+    </apex:pageBlockButtons>
+    
+    <apex:pageBlockSection title="Release Information" columns="2">
+        
+        <apex:pageBlockSectionItem helpText="Release version used for cutting Git Repo Releases.">
+        	Release Version
+        	<apex:inputText Label="Release Version" value="{!releaseVersion}" html-placeholder="v1.0"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem helpText="Release comment used for cutting Git Repo Releases.">
+        	Release Comment
+        	<apex:inputText Label="Release Comment" value="{!releaseComment}" html-placeholder="Comment" maxLength="255" size="70"/>
+        </apex:pageBlockSectionItem>
+        
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="Deployment Information" columns="2">
+        
+        <apex:outputField value="{!currAD.Name}"/>
+        <apex:outputField value="{!currAD.Jira_Story__c}"/>
+        
+        <apex:pageBlockSectionItem helpText="Select metadata file for deployment.">
+        	Package XML To Deploy
+        	<apex:selectList Label="Package XML To Deploy: " value="{!selectedAttachmentId}" size="1">
+ 	 	 		<apex:selectOptions value="{!attachmentOptions}"/>
+ 	 		</apex:selectList>
+ 	 	</apex:pageBlockSectionItem>
+ 	 	<apex:outputField value="{!currAD.Jira_Sprint__c}"/>
+ 	 	
+ 	 	<apex:outputField value="{!currAD.Notes__c}"/>
+ 	 	
+    </apex:pageBlockSection>
+	
+	<apex:pageBlockSection title="Deployment Source Information" columns="2">
+		
+		<apex:inputField value="{!currAD.Deployment_Type__c}"/>
+		<apex:inputField value="{!currAD.Source_Org__c}"/>
+		
+		<apex:inputField value="{!currAD.Git_Repo__c}"/>
+		<apex:inputField value="{!currAD.Source_Org_Type__c}"/>
+		
+		<apex:inputField value="{!currAD.Git_Repo_Src_Directory__c}"/>
+		
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection title="Deployment Target Information" columns="2">
+		
+		<apex:inputField value="{!currAD.Destination_Org__c}"/>
+		<apex:inputField value="{!currAD.Max_Poll__c}"/>
+		
+		<apex:inputField value="{!currAD.Destination_Org_Type__c}"/>
+		<apex:inputField value="{!currAD.Auto_Update_Package__c}"/>
+		
+		<apex:inputField value="{!currAD.Rollback_On_Error__c}"/>
+		<apex:inputField value="{!currAD.Run_All_Tests__c}"/>
+		
+		<apex:inputField value="{!currAD.Single_Package__c}"/>
+		<apex:outputText value=""/>
+		
+		<apex:inputField value="{!currAD.Check_Only__c}"/>
+		
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection title="Deployment Initiating Org Configuration" columns="2">
+		<apex:outputField value="{!adConfig.Initiating_Org__c}"/>
+        <apex:outputField value="{!adConfig.Initiating_Org_Instance__c}"/>
+        <apex:outputField value="{!adConfig.Endpoint_Url__c}"/>
+        <apex:outputField value="{!adConfig.Release_Endpoint_Url__c}"/>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection title="Deployment Results Status" columns="2">
+		<apex:pageBlockSectionItem helpText="Running deployment refresh status.">
+			Status
+			<apex:outputText Label="Status ">
+				<apex:actionStatus startText="Refreshing..." stopText="Waiting to Refresh" id="deploymentStatus"/>
+			</apex:outputText>
+		</apex:pageBlockSectionItem>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockSection title="Deployment Results" columns="2" id="result" rendered="false">
+		<apex:outputField value="{!currAD.Deployment_Log__c}" rendered="false"/>
+		<apex:outputField value="{!currAD.Deployment_Progress__c}" rendered="false"/>
+		<script>
+			var deployed = '{!currAD.Deployed__c}';
+			var deploymentRunning = '{!currAD.Deployment_Running__c}';
+			var initialLoad = '{!initialLoad}';
+			var refreshCounter = '{!refreshCounter}';
+		</script>
+	</apex:pageBlockSection>
+	
+	<apex:pageBlockButtons location="bottom">
+		<apex:outputPanel id="deployButtons2">
+        	<apex:commandButton action="{!validate}" value="Deploy" rerender="result, chatterfeed, messages, messages2, deployButtons, deployButtons2" rendered="{!showDepButton}" oncomplete="var deployConfirmationMsg = '';if('{!currAD.Deployment_Type__c}' == 'GIT to ORG'){deployConfirmationMsg = 'You are about to process a '; if('{!currAD.Check_Only__c}' == 'true'){deployConfirmationMsg += '(Check-Only) ';}deployConfirmationMsg += '{!currAD.Deployment_Type__c} deployment: \n\n From: {!currAD.Git_Repo__c} \n\n To: {!currAD.Destination_Org__c} ({!currAD.Destination_Org_Type__c}) ORG \n\n Using: {!selectedAttachmentName} metadata file. \n\n Please Confirm.'}else{deployConfirmationMsg = 'You are about to process a '; if('{!currAD.Check_Only__c}' == 'true'){deployConfirmationMsg += '(Check-Only) ';}deployConfirmationMsg += '{!currAD.Deployment_Type__c} deployment:\n\n From: {!currAD.Source_Org__c} ({!currAD.Source_Org_Type__c}) ORG \n\n To: {!currAD.Destination_Org__c} ({!currAD.Destination_Org_Type__c}) ORG \n\n Using: {!selectedAttachmentName} metadata file. \n\n Please Confirm.'};if('{!foundErrors}' == 'false' && confirm(deployConfirmationMsg)){deploy();}else{doNothing();}"/>
+    		<apex:commandButton action="{!validateRelease}" value="Release" rerender="chatterfeed, messages, messages2, deployButtons, deployButtons2" rendered="{!showRelButton}" oncomplete="var releaseConfirmationMsg = 'You are about to cut a release for git repo {!currAD.Git_Repo__c} with: \n\n Version: {!releaseVersion} \n\n Comment: {!releaseComment} \n\n Please Confirm.'; if('{!releaseErrors}' == 'false' && confirm(releaseConfirmationMsg)){release();}else{doNothing();}"/>
+    	</apex:outputPanel>
+    </apex:pageBlockButtons>
+
+    <script>
+    	var refreshQueued = 'false';
+    </script>	
+    
+    <apex:outputPanel id="deploymentPoller">
+		<apex:actionPoller action="{!refreshDeployment}" rendered="{!refreshDeployment}" reRender="deploymentPoller, messages, messages2, result, chatterfeed, deployButtons, deployButtons2" status="deploymentStatus" interval="5" onComplete="if (deployed == 'YES' && deploymentRunning == 'false' && initialLoad == 'false' && refreshCounter == '0' && refreshQueued == 'false'){window.setTimeout(function(){parent.location.href='/{!$CurrentPage.parameters.Id}';},2000); refreshQueued = 'true';}"/>
+	</apex:outputPanel>
+</apex:pageBlock>
+
+<apex:outputPanel id="messages2">
+	<apex:pageMessages />
+</apex:outputPanel>
+
+</apex:form>
+
+<apex:outputPanel id="chatterfeed">
+	<script>
+			var deployed = '{!currAD.Deployed__c}';
+			var deploymentRunning = '{!currAD.Deployment_Running__c}';
+			var initialLoad = '{!initialLoad}';
+			var refreshCounter = '{!refreshCounter}';
+	</script>
+	<chatter:feed entityId="{!currAD.Id}"/>
+</apex:outputPanel>
+
+
+	
+
+</apex:page>

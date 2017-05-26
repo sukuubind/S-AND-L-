@@ -1,0 +1,27 @@
+<apex:page showHeader="false" sidebar="false" cache="false" controller="webSchedulerRedirect">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <title>REDIRECT PAGE</title>
+     </head>
+<body> 
+
+<apex:form id="webschedredirectform">
+		<br/>
+		<br/>
+		<apex:outputPanel layout="block" style="border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; background: #f2f2f2; width: 100%;">
+		<font size="3" color="black">REDIRECT NOTICE</font></apex:outputPanel>
+		<br/>
+
+		<br/>
+    	<font size="4" color="blue"><apex:outputLabel value="The previous page is sending you to" />
+    	 <b><apex:outputLink value="{!$Label.DeltakSRP__webscheduler}/deltaksrp__webapptscheduler?pmid={!pmId}">{!$Label.DeltakSRP__webscheduler}/deltaksrp__webapptscheduler?pmid={!pmId}</apex:outputLink></b></font> <br/>
+		<br/>
+		<font size="4" color="black">
+	<apex:outputLabel value="You can also copy and paste the below URL onto the Address Bar!" /><br/>
+	<b><apex:outputText value="{!$Label.DeltakSRP__webscheduler}/deltaksrp__webapptscheduler?pmid={!pmId}"/></b></font>
+
+</apex:form>
+</body> 
+</html>
+</apex:page>

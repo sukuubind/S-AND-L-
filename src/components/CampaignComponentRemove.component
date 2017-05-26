@@ -1,0 +1,14 @@
+<apex:component allowDML="true"  controller="CampaignComponentRemoveController" >
+    <apex:attribute name="campaignId" assignTo="{!campaignId}" description="" type="string" required="false" />
+    <apex:attribute name="campaignName"  description="" type="string" required="false" />
+    <apex:attribute name="campaignCode" description="" type="string" required="false" />
+     
+    <!-- <td>{!campaignId}</td> -->
+    <td>{!campaignName}</td>  
+    <td>{!campaignCode}</td> 
+    <td>
+    	<apex:commandButton Value="Remove" action="{!remove}">
+    		<apex:actionSupport event="onClick" immediate="false" rerender="campaignList,campaignListPickList"/>
+    	</apex:commandButton>
+   	</td>
+</apex:component>

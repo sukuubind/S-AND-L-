@@ -1,0 +1,50 @@
+<!-- Girija: SRP-2639 -->
+
+<apex:page controller="ProspectUserAvailabilityController" showheader="false" sidebar="false">
+<apex:stylesheet value="{!URLFOR($Resource.ProspectToggleTeam)}"/>
+	
+	<apex:form style="overflow: auto;">
+		 
+    	<apex:actionFunction name="handleUser" action="{!handleUserBulkMultiAccount}" rerender="onoffswitch">
+			<apex:param name="q" assignTo="{!loggedInUser}" value=""/>
+    	</apex:actionFunction>
+    	  
+    	<apex:outputPanel style="overflow: auto;">
+    	
+    		<apex:repeat value="{!orgIdToTeamAvailList}" var="key">	
+    		<div style="float:left; padding-top:5px;">
+    		<b>	<apex:outputText value="{!accIdToName[key]}" style="padding-left:5px;"/> </b>
+    		<br/>   
+    	   		<apex:repeat value="{!orgIdToTeamAvailList[key]}" var="k" >
+    				<div style="float:left; padding-top:5px;">     
+    				<!-- {!LEFT(k.Which_user__r.LastName,1)} -->
+			  		<!--  	<apex:outputText value="{!k.Which_user__r.FirstName} {!LEFT(k.Which_user__r.LastName,1)}" style="padding-left:5px;"/>
+    					<apex:outputPanel styleclass="onoffswitch" id="onoffswitch" style="float:left;">
+    						<apex:inputcheckbox value="{!k.Is_Team_Member_Available__c}" styleclass="onoffswitch-checkbox" style="float:left; padding-left:5px;" id="myonoffswitch" onchange="handleUserBulk('{!k.Which_user__c}');"/>
+    						<apex:outputlabel styleclass="onoffswitch-label"  for="myonoffswitch">
+	    						<span class="onoffswitch-inner"></span>
+				        		<span class="onoffswitch-switch"></span> 
+    						</apex:outputlabel>
+    						
+    					</apex:outputPanel> -->
+    					
+    					<apex:outputText value="{!k.name}" style="padding-left:5px;"/>
+    			 	<apex:outputPanel styleclass="onoffswitch" id="onoffswitch" style="float:left;">
+    						<apex:inputcheckbox disabled="true" value="{!k.checkboxVF}" styleclass="onoffswitch-checkbox" style="float:left; padding-left:5px;" id="myonoffswitch" onchange="handleUser('{!k.userid}');"/>
+    						<apex:outputlabel styleclass="onoffswitch-label"  for="myonoffswitch">
+	    						<span class="onoffswitch-inner"></span>
+				        		<span class="onoffswitch-switch"></span> 
+    						</apex:outputlabel>
+    						
+    					</apex:outputPanel>   
+    				</div> 	
+    				<br/>
+    			</apex:repeat> 
+    			<br/>
+    			</div>
+    		</apex:repeat>
+    	</apex:outputPanel>
+ 
+	</apex:form>
+
+</apex:page>

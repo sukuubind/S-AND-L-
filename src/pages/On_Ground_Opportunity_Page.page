@@ -1,0 +1,38 @@
+<apex:page standardController="Opportunity" showHeader="false" sidebar="false" rendered="{!Opportunity.On_Ground_Only__c}">
+
+<style type="text/css">
+
+div.borderradius {
+background-color: #eee;
+    padding: 20px;
+    margin-top: 10px;
+    margin-right: 20px;
+text-align: left;
+font-weight: 900;
+font-size: 150%;
+color: #BE0000;
+border-radius: 15px;
+
+-moz-border-radius: 15px;
+}
+
+p
+{
+color:#BE0000;
+}
+
+</style>
+
+<div class="borderradius">
+<table align="center"><tr>
+<td> <apex:image url="{!$Resource.information}" width="50" height="50" /> </td>
+<td> <FONT color="#BE0000">
+This record is designated as On-Ground Only based on the program: 
+{!Opportunity.Program__r.Name}. If you believe this is an error please contact
+your Director of Admissions.
+</FONT>
+</td></tr></table>
+</div>
+<br/>
+
+</apex:page>

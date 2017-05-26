@@ -1,0 +1,18 @@
+<apex:component access="global" allowDML="true" controller="SRPAdmissionsdocsController">
+    <apex:attribute name="oppId"  assignTo="{!OpptyId}" description="Opportunity ID" type="string" required="false" />
+    
+    <table border="0" width="100%">
+    
+        <tr>
+            <th align="left" valign="top">Type</th>
+            <th align="left" valign="top">Detail</th>         
+        </tr>
+        
+        <apex:repeat value="{!receivedDocsList}" var="doc" id="docs">
+            <tr>                
+                <td valign="top">{!doc.RecordType.Name}</td>
+                <td valign="top">{!doc.Detail__c}</td>
+            </tr>       
+        </apex:repeat>
+    </table>
+</apex:component>

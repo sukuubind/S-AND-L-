@@ -1,0 +1,54 @@
+<apex:page showHeader="false">
+<apex:stylesheet value="{!$Resource.University_College_Cork_Chat_CSS}"/>
+
+<script type="text/javascript">
+window.resizeTo(620,600);
+</script>
+
+<apex:insert name="body">  
+
+<div class="headerSection">
+<apex:image id="headerLogo" styleClass="headerLogo" value="{!$Resource.University_College_Cork_Chat_Header_Logo}" />
+<apex:image id="headerChatBubbles" styleClass="headerChatBubbles" value="{!$Resource.University_College_Cork_Chat_Header_ChatBubbles}" />
+</div>
+
+<div class="chatSection">
+<liveAgent:clientchat >
+    <div>
+        <table id="waitingMessage" cellpadding="0" cellspacing="0">
+        <tr>
+        <td>
+            <div class="waitingMessageSection">{!$Label.University_College_Cork_LiveChat_Chat_Welcome_Message}</div>
+            <div class="waitingMessageSection">{!$Label.LiveChat_Chat_Waiting_On_Representative}</div>
+        </td>
+        </tr>
+        <tr>
+        <td>
+        <img class="progressBarSection" alt="Progress Bar" src="{!$Resource.LiveChatProgressBar}"/>
+        </td>
+        </tr>
+        </table>
+    </div>
+    <table width="100%">
+    <tr>
+    <td><div class="msgSection">{!$Label.University_College_Cork_LiveChat_Chat_Welcome_Message}<br></br></div></td>
+    <td><liveAgent:clientChatEndButton label="End Chat" /></td>
+    </tr>
+    <tr><td>
+    <liveAgent:clientChatAlertMessage />
+    <liveAgent:clientChatStatusMessage />
+    <liveAgent:clientChatLog />
+    </td></tr>
+    <tr>
+    <td><liveagent:clientChatInput /></td>
+    <td><liveAgent:clientChatSendButton label="Send"/></td>
+    </tr>
+    </table>
+</liveAgent:clientchat>
+</div>
+
+<div class="footerSection">
+</div>
+
+</apex:insert>
+</apex:page>

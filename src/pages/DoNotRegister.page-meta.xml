@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>24.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&apos;Do Not Register&apos; banner is displayed on the &apos;Student Affiliation&apos; record if the &apos;Do Not Register&apos; flag is checked on the latest associated &apos;Student Enrollment&apos; record.</description>
+    <label>DoNotRegister</label>
+</ApexPage>

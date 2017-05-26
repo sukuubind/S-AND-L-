@@ -1,0 +1,17 @@
+<apex:page controller="ProspectAdminFlowControllerToggle" showheader="false" sidebar="false">
+<apex:stylesheet value="{!URLFOR($Resource.ProspectToggleCSS)}"/>
+	
+	
+	<apex:form >
+	<apex:actionFunction name="handleUser" action="{!handleUser}" rerender="onoffswitch"/>
+	
+	<apex:outputPanel styleclass="onoffswitch" id="onoffswitch">
+    
+    <apex:inputcheckbox value="{!checkboxVF}" styleclass="onoffswitch-checkbox" id="myonoffswitch" onchange="handleUser();"/>
+    <apex:outputlabel styleclass="onoffswitch-label"  for="myonoffswitch">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </apex:outputlabel>
+</apex:outputPanel>
+</apex:form>
+</apex:page>

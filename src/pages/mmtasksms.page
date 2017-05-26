@@ -1,0 +1,42 @@
+<apex:page standardController="Task" extensions="MMTaskSMSControllerExtension" contentType="text/html"> 
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <apex:includeScript value="{!$Resource.JQueryUI}" />
+    <script>
+        var tk = jQuery.noConflict();
+        tk(document).ready(function() {
+            var smsMsg = tk("#txtSMSMsg").val();
+            smsMsg = smsMsg.replace(/\n/g,'<br/>');
+            tk("#divSMSMsg").html(smsMsg);
+        });
+    </script>
+    <div class="bDetailBlock bPageBlock secondaryPalette" id="ep">
+        <div class="pbBody">
+            <div class="pbSubsection">
+                <table class="detailList" border="0" cellpadding="0" cellspacing="0" style="width: 700px !important;">
+                    <tbody>
+                        <tr>
+                            <td class="labelCol">SMS Type</td>
+                            <td class="dataCol col02" id="tsk1_ilecell">
+                                {!smsType}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="labelCol">Phone</td>
+                            <td class="dataCol col02" id="tsk1_ilecell">
+                                {!smsPhone}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="labelCol">Message</td>
+                            <td class="dataCol col02" id="tsk1_ilecell">
+                                <textarea id="txtSMSMsg" rows="1" style="display:none;">{!smsMessage}</textarea>
+                                <div style="background-color:#FFFFFF;border:0px;width:400px;height:100px;overflow:auto;" id="divSMSMsg"></div>
+                            
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</apex:page>

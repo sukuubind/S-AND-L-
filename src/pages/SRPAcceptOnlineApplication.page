@@ -1,0 +1,3 @@
+<apex:page standardController="DeltakSRP__Student_Online_Application__c" extensions="SRPAcceptApplicationController" recordSetVar="applications" action="{!UpdateApplications}">
+ 
+</apex:page>

@@ -1,0 +1,30 @@
+<apex:page controller="MMSMSKeylinkController" action="{!initPage}" contentType="text/html" >
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <script>
+        var jq = jQuery.noConflict();
+        var ddlTableList = null;
+        var ddlFieldList = null;
+        var txtMergeField = null;
+        jq(document).ready(function() {
+            jq('div.pbSubheader').css('background-color','#1797C0');
+        });
+        var test = function() {
+            alert('hi');
+        }
+        var getStrippedComponentId = function(id){
+            return id.replace(/:/g,'\\:');
+        };
+    </script>
+    <div style="text-align:left;margin-bottom:10px;margin-top:10px;color:#4A4A56;font-weight:bold;font-size:90%;">
+        <a href="{!keylinkUrl}" class="labelCol">Back to Keylink</a>
+    </div>
+    <apex:form id="mainFormKeyLinkAttrList">
+        <apex:pageBlock id="mainPB">
+            <apex:pageBlockSection >
+                <apex:pageblocksectionItem id="detail">
+                    <apex:detail relatedList="true" inlineEdit="false" relatedListHover="false" />
+                </apex:pageblocksectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

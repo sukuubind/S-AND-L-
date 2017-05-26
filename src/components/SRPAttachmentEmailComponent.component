@@ -1,0 +1,4 @@
+<apex:component access="global" controller="SRPAttachmentEmailComponentController">
+	<apex:attribute type="Id" Name="AttachmentParentId" Description="Attachment ParentId" AssignTo="{!pid}"/> 
+	A new document has been uploaded to the following Online Application {!soa[0].Name}: https://cs10.salesforce.com/{!pid}
+</apex:component>

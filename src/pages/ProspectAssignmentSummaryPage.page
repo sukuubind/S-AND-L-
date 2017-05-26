@@ -1,0 +1,36 @@
+<apex:page standardcontroller="Account"  extensions="ProspectSummaryController" showheader="false" sidebar="false">
+<c:ProspectHeader />
+<script>
+
+	function confirmClose()
+	{
+			window.top.close();
+			return true;
+		
+	} 
+	
+</script>
+<apex:form >  
+ <apex:outputPanel > 
+ <apex:pageBlock > 
+	<c:ProspectPageHeader styleClass="pageHeader" stepValue="{!account.Name} Assignment Summary" required="true" acctName="{!account.Name}" VFPageName=""/>  <br/>
+	
+	<div align="center">
+          <apex:commandButton value="Close" styleClass="buttons"
+                                onclick="return confirmClose()" immediate="true"/>
+    </div><br/>
+    
+	<apex:repeat value="{!teamDet}" var="s">
+
+          <c:ProspectAdminSummary tmId="{!s.tId}" acctId="{!account.id}" tmName="{!s.tNm}" ruleSm="{!s.ruleDetail}" memberName="{!s.mNameMap}" memberAllocation="{!s.mAllocMap}" memberStatus="{!s.mStatusMap}" tmExempt="{!s.excFlag}" tmOrder="{!s.tOrder}"/> 
+    </apex:repeat>
+	
+	<div align="center">
+          <apex:commandButton value="Close" styleClass="buttons"
+                                onclick="return confirmClose()" immediate="true"/>
+    </div><br/> 
+</apex:pageBlock>
+
+</apex:outputPanel>
+</apex:form>
+</apex:page>

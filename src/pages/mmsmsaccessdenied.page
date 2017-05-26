@@ -1,0 +1,5 @@
+<apex:page action="{!initPage}" controller="MMSMSAccessDeniedController" contentType="text/html">
+     <apex:pageBlock title="Access Denied" id="mainPB">
+        <apex:pageMessages showDetail="false" escape="true"/>
+     </apex:pageBlock>
+</apex:page>

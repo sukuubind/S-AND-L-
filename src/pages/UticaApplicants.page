@@ -1,0 +1,74 @@
+<apex:page standardcontroller="Opportunity" recordsetvar="opp" extensions="UticaReportOpportunityPagination">
+
+<apex:form >
+<apex:outputPanel id="uticaApp">
+<apex:pageBlock >
+<apex:pageBlockTable value="{!OpportunityAppPagination}" var="o">
+<apex:column headerValue="SRP Student">
+<apex:outputfield value="{!o.DeltakSRP__Student__c}"/>
+</apex:column>
+<apex:column headerValue="Program Abbreviation">
+<apex:outputfield value="{!o.SRP_Program_Abbreviation__c}"/>
+</apex:column>
+<!-- <apex:column headerValue="Date Booked*">
+<apex:outputfield value="{!o.Date_Accepted__c}"/> 
+</apex:column> -->
+<apex:column headerValue="Start Date">
+<apex:outputfield value="{!o.DeltakSRP__Start_Date__c}"/>
+</apex:column>
+<apex:column headerValue="Stage">
+<apex:outputfield value="{!o.StageName}"/>
+</apex:column>
+<apex:column headerValue="% File Complete">
+<apex:outputfield value="{!o.DeltakSRP__File_Complete__c}"/>
+</apex:column>
+<!-- <apex:column headerValue="Date Submitted*">
+<apex:outputfield value="{!o.Date_Submitted__c}"/>
+</apex:column>
+<apex:column headerValue="Days Since Booked Application*">
+<apex:outputfield value="{!o.Days_Since_Booked_Application__c}"/> 
+</apex:column> -->
+</apex:pageBlockTable>
+</apex:pageBlock>
+<!--  
+<table  cellspacing="0" border="0" width="100%">
+                        <thead>
+                            <th style="width:25%; border-bottom:1px dashed black; border-right:1px dashed black;">SRM Student</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Program Abbreviation*</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Date Booked*</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Start Date*</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Stage</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">% File Complete</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Date Submitted*</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Days Since Booked Application*</th>
+                            
+                        </thead>
+                          
+                          
+                            <apex:repeat value="{!OpportunityAppPagination}" var="o">
+                            <tr>
+                           <td> <apex:outputfield value="{!o.Student__c}"/> </td>
+                           <td> <apex:outputfield value="{!o.Program_Abbrev__c}"/> </td>
+                           <td> <apex:outputfield value="{!o.Date_Accepted__c}"/> </td>
+                           <td> <apex:outputfield value="{!o.Start_Date__c}"/> </td>
+                           <td> <apex:outputfield value="{!o.StageName}"/> </td>
+                           <td> <apex:outputfield value="{!o.File_Complete__c}"/> </td>              
+                           <td> <apex:outputfield value="{!o.Date_Submitted__c}"/> </td>
+                            <td> <apex:outputfield value="{!o.Days_Since_Booked_Application__c}"/>  </td>      
+                                  </tr> 
+                           </apex:repeat>
+                        </table>
+                  -->
+     
+      <apex:panelGrid columns="2">
+      <apex:commandLink action="{!previousApp}" rerender="uticaApp">
+          Previous
+      </apex:commandlink>
+      <apex:commandLink action="{!nextApp}" rerender="uticaApp">
+          Next
+      </apex:commandlink>
+      </apex:panelgrid>
+      </apex:outputpanel>
+      </apex:form>
+      
+</apex:page>

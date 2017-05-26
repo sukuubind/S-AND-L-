@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>18.0</apiVersion>
+    <description>This component will list all received admissions documents given the ID of the opportunity for the student</description>
+    <label>SRP Received Admissions Documents</label>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>800</minorNumber>
+        <namespace>DeltakSRP</namespace>
+    </packageVersions>
+</ApexComponent>

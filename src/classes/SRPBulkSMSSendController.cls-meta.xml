@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>29.0</apiVersion>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>28</minorNumber>
+        <namespace>smagicinteract</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>2</minorNumber>
+        <namespace>smagicschedule</namespace>
+    </packageVersions>
+    <status>Active</status>
+</ApexClass>

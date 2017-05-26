@@ -1,0 +1,139 @@
+<apex:page showheader="false" sidebar="false" standardController="Opportunity" renderAs="pdf" extensions="UpdatedFileChecklistController">
+ 
+    <apex:pageBlock >
+        <div style="font-size:24px;font-weight:bold;">
+            {!Opportunity.Account.Name}
+        </div>
+        <div style="font-size:18px;margin-bottom:20px;">
+            Admissions File Checklist
+        </div>
+        <div style="width:100%;background:#000;color:white;">
+            Opportunity Information
+        </div>
+        
+        <table width="100%">
+            <tr>
+                <td style="width:120px;">
+                    <apex:outputLabel value="Name:" for="Name"/>
+                </td>
+                <td>
+                    <apex:outputText value="{!Opportunity.DeltakSRP__Student__r.firstname} {!Opportunity.DeltakSRP__Student__r.lastname}" id="Name"/>
+                    
+                </td>
+                <td class="labelCol">
+                    <apex:outputLabel value="Start Date:" for="Start"/>
+                </td>
+                <td>
+                    <apex:outputField value="{!Opportunity.DeltakSRP__Start_Date__c}" id="Start"/>
+                </td>   
+            </tr>
+            
+            <tr>
+                <td class="labelCol">
+                    <apex:outputLabel value="Program:" for="Program"/>
+                </td>
+                <td>
+                    <apex:outputText value="{!Opportunity.DeltakSRP__Academic_Program__r.Name}" id="Program"/>
+                </td>
+                <td class="labelCol">
+                    <apex:outputLabel value="Specialization:" for="Specialization"/>
+                </td>
+                <td>
+                    <apex:outputText value="{!Opportunity.DeltakSRP__Academic_Specialization__r.Name}" id="Specialization"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td class="labelCol">
+                    <apex:outputLabel value="File Started On:" for="Booked"/>
+                </td>
+                <td>
+                    <apex:outputField value="{!Opportunity.DeltakSRP__Date_Booked__c}" id="Booked"/>
+                </td>
+                <td class="labelCol">
+                    <apex:outputLabel value="Date File Submitted:" for="Submitted"/>
+                </td>
+                <td>
+                    <apex:outputField value="{!Opportunity.DeltakSRP__Date_Submitted__c}" id="Submitted"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="labelCol">
+                    <apex:outputLabel value="College/University:" for="SchoolCollege"/>
+                </td>
+                <td>
+                    <apex:outputText value="{!Opportunity.Organization_Name__c}" id="SchoolCollege"/> 
+                </td>
+                <!-- <td class="labelCol">
+                    <apex:outputLabel value="Specialization:" for="Specialization"/>
+                </td>
+                <td>
+                    <apex:outputText value="{!Opportunity.DeltakSRP__Academic_Specialization__r.Name}" id="Specialization"/>
+                </td> -->
+            </tr>
+        </table>
+    </apex:pageBlock>
+        <br/><br/>
+    <apex:pageBlock >
+    
+        <div style="width:100%;background:#000;color:white;">
+            Admissions Documents
+        </div>
+    
+        <!--<table style="width:100%; table-layout: fixed; word-break:break-word">-->
+        <table style="width:100%; word-break:break-word">
+            <tr style="font-weight:bold;">
+                <th style="width= 10%;text-align:center">
+                    Status
+                </th>
+                <th style="width= 15%;text-align:center">
+                    Type
+                </th>
+                <th style="widht= 30%;text-align:center">
+                    Detail
+                </th>
+                <th style="width= 15%;text-align:center">
+                    Date Received
+                </th>
+                <th style="width= 15%">
+                    Comments
+                </th>
+                <th style="width= 15%;text-align:center">
+                    Degree Conferral
+                </th>
+            </tr>
+            <apex:repeat value="{!docs}" var="item">
+                <tr>
+                    <td>
+                        <apex:image rendered="{!item.DeltakSRP__Status_Boolean__c == 'FALSE'}"
+                            value="{!$Resource.DeltakSRP__Red_X}"
+                            width="30"
+                            height="30"/>
+                        <apex:image rendered="{!item.DeltakSRP__Status_Boolean__c != 'FALSE'}"
+                            value="{!$Resource.DeltakSRP__Checkbox}"
+                            width="30"
+                            height="30"/>
+                    </td>
+                    <td style = " word-break:break-word;max-width:10px;">
+                        <apex:outputText value="{!item.RecordType.Name}"/>
+                    </td>
+                    <td style = " word-break:break-word">
+                        <apex:outputText value="{!item.Detail__c}"/>
+                    </td>
+                    <td style = " word-break:break-word">
+                        <apex:outputField value="{!item.DeltakSRP__Date_Received__c}"/>
+                    </td>
+                    <td>
+                        <apex:outputText value="{!item.DeltakSRP__Comments__c}"/>
+                    </td>
+                    <td style = " word-break:break-word">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                            <apex:param value="{!item.DeltakSRP__Degree_Conferral_Date__c}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </apex:repeat>
+        </table>
+    </apex:pageBlock>
+    
+</apex:page>

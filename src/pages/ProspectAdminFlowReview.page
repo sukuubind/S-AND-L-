@@ -1,0 +1,81 @@
+<apex:page standardcontroller="Account" extensions="ProspectAdminFlowController" showheader="false" sidebar="false">
+<c:ProspectHeader />
+<script>
+
+	function confirmClose()
+	{
+			window.top.close();
+			return true;
+		
+	}
+	
+	function confirmStartOver()
+	{
+		var isStart = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to start over?");
+		if (isStart) 
+		{
+			return true;
+		}
+		else
+		{
+			return false; 
+		}
+		return false;
+	
+	}	
+	
+</script>	
+<apex:form id="reviewForm">
+ <style>
+        tr.headerRow .TableTitle {
+            color: #818285 !important; 
+            font-size: 14px !important;
+        }
+    </style>
+    
+	<apex:pageBlock >
+		<c:ProspectPageHeader styleClass="pageHeader" stepValue="Review" required="true" acctName="{!acctName}" VFPageName="Review"/> <br/>
+		<apex:outputPanel styleClass="prospectText">
+		<apex:pageMessages rendered="{!isError}"/>
+		</apex:outputPanel>
+	    
+		<div align="center">
+			
+			<apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+        					    onclick="return confirmStartOver()" immediate="true"/>	
+			<apex:commandButton action="{!step2Choose}" value="Edit Team" styleClass="buttons"/>
+	        <apex:commandButton value="Close" styleClass="buttons"
+                                onclick="return confirmClose()" immediate="true"/>
+        </div><br/>
+        
+        <div>
+			<h1><b>	<apex:outputText value=" {!teamName}" styleClass="prospectText" style="font-size:16px; font-weight:bold"/>	</b></h1>
+		</div><br/>
+		<apex:outputPanel id="ruleDet"> 
+         <apex:outputText value="Rule and Member Details" styleClass="pageblockTable"/><br/><br/>
+         
+         <apex:repeat value="{!displayRuleSummary}" var="dis">
+         	
+         	<apex:outputText value="{!dis}" escape="false" styleClass="prospectText"/>
+         	<br/>
+	 	 </apex:repeat>
+	 	
+ 		</apex:outputPanel>
+        <apex:outputPanel id="fields">
+        <apex:pageBlockTable value="{!memAllocList}" var="r">             
+                        <apex:column headerValue="Member Name" value="{!r.memberName}" headerClass="TableTitle"></apex:column>
+                        <apex:column headerValue="Percentage Allocation" value="{!r.memberAllocation}" headerClass="TableTitle"></apex:column>
+                        <apex:column headerValue="Member Status" value="{!r.status}" headerClass="TableTitle"></apex:column>
+        </apex:pageBlockTable>
+		</apex:outputPanel>
+		<div align="center">
+			<apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+        						onclick="return confirmStartOver()" immediate="true"/>	
+			<apex:commandButton action="{!step2Choose}" value="Edit Team" styleClass="buttons"/>
+	        <apex:commandButton value="Close" styleClass="buttons"
+                                onclick="return confirmClose()" immediate="true"/>
+        </div>
+	</apex:pageBlock>
+	
+</apex:form>
+</apex:page>

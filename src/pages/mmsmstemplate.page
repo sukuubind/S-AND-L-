@@ -1,0 +1,98 @@
+<apex:page controller="MMSMSTemplateController" action="{!initPage}" contentType="text/html" >
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <script>
+        var jq = jQuery.noConflict();
+        var ddlTableList = null;
+        var ddlFieldList = null;
+        var txtMergeField = null;
+        jq(document).ready(function() {
+            ddlTableList = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.MailMergeSection.TableItem.tableList}'));
+            ddlFieldList = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.MailMergeSection.FieldItem.fieldList}'));
+            txtMergeField = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.MailMergeSection.MergeFieldItem.mergeField}'));
+            
+            //tableList Change Event
+            ddlTableList.bind('change',function() {
+                ddlFieldList.find('OPTION').remove();
+                txtMergeField.val('');
+                if (jq(this).val() == '') {
+                    ddlFieldList.css('width','200px');
+                }
+                else {
+                    getFieldListClient(jq(this).val());
+                }
+            });
+            jq("div.pbSubheader").css("background-color","#1797C0");
+        });
+        var getStrippedComponentId = function(id){
+            return id.replace(/:/g,'\\:');
+        }
+        function fieldSectionJS() {
+            //fieldList Change Event
+            document.getElementById(ddlFieldList.attr('id')).onchange = function() {
+                if(jq(this).val() != null && jq(this).val() != '' && ddlTableList.val() != null && ddlTableList.val() != '') {
+                   txtMergeField.val('[!' + ddlTableList.val() + '.' + jq(this).val() + ']');
+                }
+                else {
+                    txtMergeField.val('');
+                }
+            };
+        }
+    </script>
+    <apex:form id="mainForm">
+        <apex:actionFunction action="{!getFieldListJson}" name="getFieldListClient" reRender="fieldList" oncomplete="fieldSectionJS()">
+            <apex:param name="tableNameParam" assignTo="{!selectedTable}" value="" />
+        </apex:actionFunction>
+        <apex:pageBlock title="MMSMS Template" id="mainPB">
+            <apex:pageMessages showDetail="false" escape="true"/>
+            <apex:pageBlockButtons id="pbButtons">
+                    <apex:commandButton value="Save Template" action="{!saveTemplate}"/> 
+                    <apex:commandButton value="Delete Template" action="{!deleteTemplate}" disabled="{!btnDeleteDisabled}" /> 
+                    <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="true" id="MailMergeSection" title="Mail Merge" columns="1">
+                <apex:pageBlockSectionItem id="TableItem">
+                    <apex:outputLabel value="Record Type" for="tableList"></apex:outputLabel>    
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList id="tableList" value="{!selectedTable}" multiselect="false" size="1">
+                            <apex:selectOptions value="{!tableList}"/>            
+                        </apex:selectList>
+                    </apex:outputPanel>            
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="FieldItem">
+                    <apex:outputLabel value="Fields" for="fieldList"></apex:outputLabel>    
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList id="fieldList" value="{!selectedField}" multiselect="false" size="1" style="width:200px">
+                            <apex:selectOptions value="{!fieldList}"/>            
+                        </apex:selectList>
+                    </apex:outputPanel>            
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="MergeFieldItem">
+                    <apex:outputLabel value="Merge Field" for="mergeField"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="mergeFieldPanel">
+                        <apex:inputText id="mergeField" style="width:200px" />   
+                        <br/>
+                        <apex:outputPanel >Copy and paste the merge field value into your template below.</apex:outputPanel>
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection collapsible="false" id="TemplateSection" title="Template" columns="1">
+               <apex:pageBlockSectionItem id="TemplateNameItem">
+                    <apex:outputLabel value="Template Name" for="templateNameField"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="templateNameFieldPanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText id="templateNameField" style="width:200px" value="{!templateNameField}" />   
+                        <apex:outputPanel styleClass="errorMsg" layout="block" rendered="{!isErrorTemplateName}"><strong> Error : You must enter a value </strong> </apex:outputPanel>
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="TemplateItem">
+                    <apex:outputLabel value="Template" for="templateField"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="templateFieldPanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputTextarea id="templateField" rows="7" cols="50" value="{!templateField}" />   
+                        <apex:outputPanel styleClass="errorMsg" layout="block" rendered="{!isErrorTemplateField}"><strong> Error : You must enter a value </strong> </apex:outputPanel>                        
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

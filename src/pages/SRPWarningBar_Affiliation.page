@@ -1,0 +1,47 @@
+<apex:page sidebar="false" showHeader="false" StandardController="Contact" extensions="SRPWarningBarContactController">
+  <style>
+    .redbar
+    {
+    float:left;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #C33;
+    vertical-align: middle;
+    height: 28px;
+    -moz-border-radius: 15px;
+    border-radius: 6px;
+    }
+    .greenbar
+    {
+    float:left;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    background-color: green;
+    vertical-align: middle;
+    height: 28px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    }
+  </style>
+      <div style="text-align:center; width=100%">
+          <apex:outputText rendered="{!doNotCall}" value="Do Not Call" style="{!barWidth}" styleClass="redbar"/>
+          <apex:outputText rendered="{!!doNotCall}" value="Ok to Call" style="{!barWidth}" styleClass="greenbar"/>
+          
+          <apex:outputText rendered="{!!okToText}" value="Do Not Text" style="{!barWidth}" styleClass="redbar"/>
+          <apex:outputText rendered="{!okToText}" value="Ok To Text" style="{!barWidth}" styleClass="greenbar"/>
+          
+          <apex:outputText rendered="{!emailOptOut}" value="Do Not Email" style="{!barWidth}" styleClass="redbar" />
+          <apex:outputText rendered="{!!emailOptOut}" value="Ok to Email" style="{!barWidth}" styleClass="greenbar" />
+          
+          <apex:outputText rendered="{!doNotRegister}" value="Do Not Register" style="{!barWidth}" styleClass="redbar" />
+          <apex:outputText rendered="{!!doNotRegister}" value="OK To Register" style="{!barWidth}" styleClass="greenbar" />
+          
+          <apex:outputText rendered="{!recordedCall}" value="Ok to Record" style="{!barWidth}" styleClass="greenbar" />
+          <apex:outputText rendered="{!!recordedCall}" value="Do Not Record" style="{!barWidth}" styleClass="redbar" />
+          &nbsp;
+          
+      </div>
+</apex:page>

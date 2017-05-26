@@ -1,0 +1,20 @@
+<apex:page controller="ProspectUserAvailabilityController" showheader="false" sidebar="false">
+<apex:stylesheet value="{!URLFOR($Resource.ProspectToggleTeam)}"/>     
+<apex:form style="overflow: auto;">    
+	<apex:outputPanel style="overflow: auto;">
+	<apex:repeat value="{!teamAvailList}" var="key">
+	<div style="float:left; padding-top:5px;">
+	    <apex:outputText value="{!key.name}" style="padding-left:5px;"/>
+	    <apex:outputPanel styleclass="onoffswitch" id="onoffswitch" style="float:left;">	    
+		    <apex:inputcheckbox disabled="true" value="{!key.checkboxVF}" styleclass="onoffswitch-checkbox" style="float:left; padding-left:5px;" id="myonoffswitch" />
+		    <apex:outputlabel styleclass="onoffswitch-label"  for="myonoffswitch">
+		        <span class="onoffswitch-inner"></span>
+		        <span class="onoffswitch-switch"></span> 
+		    </apex:outputlabel>
+	    </apex:outputPanel>
+	</div>
+	<br/>
+	</apex:repeat>
+	</apex:outputPanel>
+</apex:form>
+</apex:page>

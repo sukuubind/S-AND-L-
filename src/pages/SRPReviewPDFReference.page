@@ -1,0 +1,172 @@
+<apex:page standardcontroller="DeltakSRP__Student_Online_Application__c" extensions="SRPReviewPDFReferenceController" renderAs="pdf" showHeader="false" sidebar="false">
+
+		<apex:outputText value="{!$Label.No_Completed_References_Found_Error}"  rendered="{!dataExists = FALSE}"/>
+
+ 		<apex:repeat value="{!slr}" var="ref">
+		<div style="page-break-after:always;"> 
+		<apex:pageBlock title="References"> 
+		
+	  	 	<apex:pageBlockSection title="Reference Details" columns="1">
+	  	 	
+	  	 		 <apex:outputField value="{!ref.SRP_Academic_Institution__c}" rendered="{!ref.SRP_Academic_Institution__c != ''}" />
+	  	 		 
+	  	 		 <apex:outputField value="{!ref.DeltakSRP__Student_Name__c}" rendered="{!ref.DeltakSRP__Student_Name__c != ''}"/> 
+		
+				 <apex:outputField value="{!ref.DeltakSRP__Reference_Name__c}" rendered="{!ref.DeltakSRP__Reference_Name__c !=''}"/>
+ 			 	 
+ 			 	 <apex:outputField value="{!ref.DeltakSRP__Reference_Email__c}" rendered="{!ref.DeltakSRP__Reference_Email__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.Reference_Phone__c}" rendered="{!ref.Reference_Phone__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.Title_Position__c}" rendered="{!ref.Title_Position__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.Address__c}" rendered="{!ref.Address__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.City__c}" rendered="{!ref.City__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.State__c}" rendered="{!ref.State__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.Zip__c}" rendered="{!ref.Zip__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.How_Long__c}" rendered="{!ref.How_Long__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__How_do_you_know_this_Person__c}" rendered="{!ref.DeltakSRP__How_do_you_know_this_Person__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.Capacity_CJ__c}" rendered="{!ref.Capacity_CJ__c != ''}"/>
+				 
+				 <apex:outputField value="{!ref.Capacity__c}" rendered="{!ref.Capacity__c != ''}"/>	 
+				 
+				 <apex:outputField value="{!ref.Need_Additional_Information_for_Own__c}" rendered="{!ref.Need_Additional_Information_for_Own__c != ''}" />
+				 
+				 <apex:outputField value="{!ref.Need_Additional_Info_for_TeamMembers__c}" rendered="{!ref.Need_Additional_Info_for_TeamMembers__c !=''}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Reference_Text__c}" rendered="{!ref.DeltakSRP__Reference_Text__c != ''}"/>
+		 
+ 			 	 
+			 </apex:pageBlockSection> 
+			 			 
+ 		 <apex:pageBlockSection title="Other Details" columns="1" >
+			 
+			 <apex:repeat value="{!fields}" var="f"> 
+			 
+				 <apex:outputField value="{!ref[f]}" rendered="{!ref[f] != ''}"/>  
+  
+ 			 </apex:repeat>
+  
+		 </apex:pageBlockSection> 
+			
+		<hr size="10px" color="black"/>
+		</apex:pageBlock> 
+ 		</div>
+	    </apex:repeat> 
+	    
+</apex:page>
+					 	
+	<!-- 			 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Student_Name__c}"/>
+				
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Reference_Email__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Reference_Phone__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Title_Position__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Address__c}" />
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.City__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.State__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Zip__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.How_Long__c}" />
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__How_do_you_know_this_Person__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Capacity_CJ__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Capacity__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.SRP_Academic_Institution__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Need_Additional_Information_for_Own__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Need_Additional_Info_for_TeamMembers__c}"/>
+				 
+				 <apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Reference_Text__c}"/>
+		
+			</apex:pageBlockSection> 
+			
+			<apex:pageBlockSection title="Strengths/Skills" columns="2">
+			
+				 <apex:outputField value="{slrs[f.DisplayType]}"/>
+			
+			</apex:pageBlockSection> 
+			
+			
+			
+	<!--		<apex:pageBlockSection title="Strengths/Skills" columns="2">
+			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Analytical_Thinking__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Comm_Skills__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Motivation__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Imagination_Creativity__c}"/>  
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Maturity_Independence__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Ability_to_Collaborate__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Clinical_Nursing_Skills__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Talents__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Appropriate__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Strength_of_Rec__c}"/>  
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Academic_Ability__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Interaction__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Outstanding_Qualities__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Overall_Evaluation__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Interpersonal_Skills__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Communication_Skills__c}"/>  
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Analysis__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Strategic_Planning__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Leadership__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Team_Building__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Ethical_Standards__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Global_Understanding__c}"/>  
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Diversity_Awareness__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.Evaluator_s_Narrative_Statement__c}"/>   	
+								
+			</apex:pageBlockSection>   -->
+			
+	<!-- 		<apex:pageBlockSection title="Reference Details" columns="2">
+			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Affiliation__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Site_Url__c}"/> 
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Status__c}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.DeltakSRP__Program_Reference_Letter_Config__c}"/>  
+				
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.CreatedById}"/>   
+			 			
+				<apex:outputField value="{!ref.DeltakSRP__Student_Letter_of_Reference__r.LastModifiedById}"/>  
+		 -->

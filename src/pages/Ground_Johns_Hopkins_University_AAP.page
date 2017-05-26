@@ -1,0 +1,34 @@
+<apex:page showHeader="false" controller="Post_Chat_Form_Controller" id="LiveAgent_PostChatForm">
+<apex:stylesheet value="{!$Resource.Johns_Hopkins_University_AAP_Chat_CSS}"/>
+
+<script type="text/javascript">
+window.resizeTo(620,560);
+</script> 
+
+<apex:insert name="body">
+
+<div class="headerSection">
+<apex:image id="headerLogo" styleClass="headerLogo" value="{!$Resource.Johns_Hopkins_University_AAP_Chat_Header_Logo}" />
+<apex:image id="headerChatBubbles" styleClass="headerChatBubbles" value="{!$Resource.Johns_Hopkins_University_AAP_Chat_Header_ChatBubbles}" />
+</div>
+<div class="postchatForm">
+<table width="100%">
+<tr>
+<td class="tdFormSection">
+ <div class="subtitleSection">
+    {!$Label.Johns_Hopkins_University_AAP_Chat_Ground_Response}
+    </div>
+    </td>
+<td class="tdImgSection">       
+    <apex:image id="insetImg" styleClass="postChatInsetImgSection" value="{!$Resource.Johns_Hopkins_University_AAP_Chat_Inset}"/>
+</td>
+</tr>
+</table>   
+</div>
+
+<div class="footerSection">
+</div>
+
+</apex:insert>
+
+</apex:page>

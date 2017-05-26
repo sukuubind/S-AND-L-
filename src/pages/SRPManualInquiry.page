@@ -1,0 +1,529 @@
+<apex:page showheader="true" sidebar="true" controller="SRPManualInquiryController" >
+    
+    <apex:form id="theentireform" >  
+    <apex:pagemessages /> 
+        <apex:pageBlock title="{!$Label.New_Inquiry_Form_Title}" mode="view">
+         
+            <apex:pageBlockButtons location="bottom">
+                <apex:actionStatus id="mySaveStatus1">
+         <apex:facet name="stop">
+             
+			<apex:commandButton id="subBtn"  rerender="theentireform" action="{!saveSRMLead}" value="Save" rendered="{!OppId==null}" status="mySaveStatus1" />
+        	
+         </apex:facet>
+         <apex:facet name="start">
+             <apex:outputPanel >
+                   <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+                   <apex:commandButton value="Processing..." status="mySaveStatus1" disabled="true"/>
+               </apex:outputPanel>
+           </apex:facet>
+        </apex:actionStatus>
+        
+        
+        <apex:actionStatus id="mySaveStatus2">
+         <apex:facet name="stop">
+            <apex:commandButton id="subBtn2"  rerender="theentireform" action="{!saveSRMLead}" value="Save" rendered="{!OppId!=null}" status="mySaveStatus2"/>
+         	
+         </apex:facet>
+         <apex:facet name="start">
+             <apex:outputPanel >
+                   <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+                   <apex:commandButton value="Processing..." status="mySaveStatus2" disabled="true"/>
+               </apex:outputPanel>
+           </apex:facet>
+        </apex:actionStatus>
+                
+                
+                
+                
+                
+                
+            </apex:pageBlockButtons>
+            
+             <apex:pageBlockSection title="{!$Label.New_Inquiry_Form_Retain_Ownership}" columns="1" rendered="{!OppId==null}">                
+                <apex:pageBlockSectionItem helpText="{!retainOwnerHelp}" >
+                    <apex:outputLabel value="Retain Owner" for="opp__retrainowner"/>
+                    <apex:inputCheckbox value="{!RetainOwner}" id="opp__retrainowner">
+                        <apex:actionSupport event="onclick" action="{!retainOwnershipChanged}" 
+                                            status="campusStatus" immediate="false" rerender="campusPanel, programPanel, specPanel" />
+                    </apex:inputCheckbox>
+                </apex:pageBlockSectionItem>                
+            </apex:pageBlockSection>    
+            
+            <apex:pageBlockSection title="{!$Label.New_Inquiry_Form_Personal_Information}" columns="1">
+                <apex:pageBlockSectionItem >                    
+                    {!$Label.New_Inquiry_Form_First_Name} <font color="red">*</font> 
+                    <apex:inputText value="{!StudentFirstName}" id="opp__firstname"> 
+              <!--         <script type="text/javascript">
+                            function validate_firstname()
+                            {   var alerttxt = "{!$Label.New_Inquiry_Form_student_fname_error_message}";
+                                var x=document.getElementById('{!$Component.opp__firstname}');
+                                //alert(x.value);
+                                if (x.value.length<2) 
+                                {
+                                    alert(alerttxt);
+                                    return false;
+                                }
+                                else   
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }      
+                        </script> --> 
+                    </apex:inputText>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                    {!$Label.New_Inquiry_Form_Last_Name} <font color="red">*</font> 
+                    <apex:inputText value="{!StudentLastName}" id="opp__lastname"> 
+                 <!--        <script type="text/javascript">
+                            function validate_lastname()
+                            {   var alerttxt = "{!$Label.New_Inquiry_Form_student_lname_error_message}";
+                                var x=document.getElementById('{!$Component.opp__lastname}');
+                                //alert(x.value);
+                                if (x.value.length<2) 
+                                {
+                                    alert(alerttxt);
+                                    return false;
+                                }
+                                else   
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }       
+                        </script> -->
+                    </apex:inputText>
+                    
+                </apex:pageBlockSectionItem>
+                
+                <!--  <apex:pageBlockSectionItem >
+                    {!$Label.New_Inquiry_Form_Company} <font color="red">*</font>
+                    <apex:inputText value="{!Company}" id="opp__company">
+                    <script type="text/javascript">
+                            function validate_company()
+                            {   var alerttxt = "{!$Label.New_Inquiry_Form_company_error_message}";
+                                var x=document.getElementById('{!$Component.opp__company}');
+                                //alert(x.value);
+                                if (x.value.length<2) 
+                                {
+                                    alert(alerttxt);
+                                    return false;
+                                }
+                                else   
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }       
+                        </script>
+                    </apex:inputText>
+                </apex:pageBlockSectionItem> -->
+                    
+                    
+                <apex:pageBlockSectionItem rendered="{!OppId==null}">                
+                    {!$Label.New_Inquiry_Form_Campus} <font color="red">*</font>
+                    <apex:outputPanel id="campusPanel"  >
+                         <apex:actionStatus id="campusStatus" startText="{!$Label.New_Inquiry_Form_Loading_Campus}">
+                            <apex:facet name="stop"> 
+                                <apex:selectList id="campusPicklist" value="{!campusId}" size="1">
+                                    <apex:selectOptions value="{!campuses}"/>
+                                     
+                                    <apex:actionSupport event="onchange" action="{!campusChanged}" 
+                                                        status="programStatus" immediate="false" rerender="programPanel, specPanel" />
+                                    
+                          <!--          <script type="text/javascript">
+                                        function validate_campus( )
+                                        {   
+                                            var alerttxt = "{!$Label.New_Inquiry_Form_campus_error_message}";
+                                            var x=document.getElementById('{!$Component.campusPicklist}');
+                                            //alert(x.value);
+                                            if (x.value=="{!$Label.None_Option}" || x.value=='' ) 
+                                            {
+                                                alert(alerttxt);
+                                                return false;
+                                            }
+                                            else   
+                                            {
+                                                return true;
+                                            }
+                                        }       
+                                    </script>         -->             
+                                </apex:selectList>
+                             </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>           
+                </apex:pageBlockSectionItem>
+                                 
+                <apex:pageBlockSectionItem >
+                    
+                    {!$Label.New_Inquiry_Form_Program} <font color="red">*</font>
+                    <apex:outputPanel id="programPanel">                                
+                        <apex:actionStatus id="programStatus" startText="{!$Label.New_Inquiry_Form_Loading_Programs}">
+                            <apex:facet name="stop">
+                                
+                                <apex:selectList id="programPicklist" value="{!programId}" size="1">
+                                    <apex:selectOptions value="{!programs}"/>
+                                    <apex:actionSupport event="onchange" action="{!programChanged}" 
+                                        status="specStatus" rerender="programPanel, specPanel" immediate="false"/>
+                            <!--        <script type="text/javascript">
+                                        function validate_program( )
+                                        {   
+                                            var alerttxt = "{!$Label.New_Inquiry_Form_Program_Error_message}";
+                                            var x=document.getElementById('{!$Component.programPicklist}');
+                                            //alert(x.value);
+                                            if (x.value=="{!$Label.None_Option}" || x.value=='' ) 
+                                            {
+                                                alert(alerttxt);
+                                                return false;
+                                            }
+                                            else   
+                                            {
+                                                return true;
+                                            }
+                                        }        
+                                    </script>  -->
+                                </apex:selectList>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >                    
+                    {!$Label.New_Inquiry_Form_Specialization} <font color="red">*</font>
+                   <apex:outputPanel id="specPanel"  >
+                        <apex:actionStatus id="specStatus" startText="{!$Label.New_Inquiry_Form_Loading_Specializations}">
+                            <apex:facet name="stop">            
+                            <apex:selectList id="specPicklist" value="{!specializationId}" size="1">
+                                <apex:selectOptions value="{!specializations}"/>                                   
+                          <!--          <script type="text/javascript">
+                                        function validate_specialization( )
+                                        {   
+                                            var alerttxt = "{!$Label.New_Inquiry_Form_specialization_error_message}";
+                                            var x=document.getElementById('{!$Component.specPicklist}');
+                                            //alert(x.value);
+                                            if (x.value=="{!$Label.None_Option}" || x.value=='' ) 
+                                            {
+                                                alert(alerttxt);
+                                                return false;
+                                            }
+                                            else   
+                                            {
+                                                return true;
+                                            }
+                                        }       
+                                    </script>  -->
+                                </apex:selectList>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            
+            
+                <apex:pageBlockSectionItem >                   
+                   {!$Label.New_Inquiry_Form_Interested_Timeframe} <font color="red">*</font>
+                   <apex:selectList id="timeframe" value="{!selectedTimeframe}" size="1">
+                        <apex:selectOptions value="{!timeframeOptions}">
+                   <!--         <script type="text/javascript">
+                                function validate_timeframe( )
+                                {   
+                                    var alerttxt = "{!$Label.New_Inquiry_Form_timeframe_error_message}";
+                                    var x=document.getElementById('{!$Component.timeframe}');
+                                    //alert(x.value);
+                                    if (x.value=="{!$Label.None_Option}" || x.value==  '' || x.value== ' ' || x.value==null ) 
+                                    {
+                                        alert(alerttxt);
+                                        return false;
+                                    }
+                                    else   
+                                    {
+                                        return true; 
+                                    }
+                                }        
+                            </script>  -->
+                        </apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+             
+             
+             <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="{!$Label.New_Inquiry_Form_Gender}" for="gender"/>
+                 <apex:selectList id="gender" value="{!selectedGender}" size="1">
+                     <apex:selectOptions value="{!genderOptions}"/>                           
+                 </apex:selectList>
+             </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="{!$Label.New_Inquiry_Form_Contact_Information}" columns="2">
+                <apex:pageBlockSectionItem >
+                    {!$Label.New_Inquiry_Form_Email} <font color="red">*</font>         
+                    <apex:inputText value="{!Email}" id="emailAdd">
+                <!--        <script type="text/javascript">
+                            function validate_email( )
+                            {   
+                                var alerttxt = "{!$Label.New_Inquiry_Form_email_missing_text}";
+                                var missingTxt = "{!$Label.New_Inquiry_Form_email_error_message}";
+                                var x=document.getElementById('{!$Component.emailAdd}');
+                                
+                                // only validate if there is something in the email field
+                                if (x.value.length>0) 
+                                {
+                                    //This is hte same Regex that we use for leadprocessor and rasID
+                                    var regex = new RegExp("^([a-z0-9+._-]+@)([a-z0-9-]+\\.)+(a(?:[cdefgilmnoqrstuwxz]|ero|(rp|si)a)$|(b([abdefghijmnorstvwyz]|iz))$|(c([acdfghiklmnoruvxyz]|at|o(m|op)))$|(d[ejkmoz])$|(e([ceghrstu]|du))$|(f[ijkmor])$|(g([abdefghilmnpqrstuwy]|ov))$|(h[kmnrtu])$|(i([delmnoqrst])|(n(fo|t)))$|(j([emop]|obs))$|(k[eghimnprwyz])$|(l[abcikrstuvy])$|(m([acdeghklmnopqrstuvwxyz]|il|obi|useum))$|(n([acefgilopruz]|ame|et))$|o(m|rg)$|(p([aefghklmnrstwy]|ro))$|(qa)$|(r[eosuw])$|(s[abcdeghijklmnortuvyz])$|(t([cdfghjklmnoprtvwz]|(rav)?el))$|(u[agkmsyz])$|(v[aceginu])$|(w[fs])$|(y[etu])$|(z[amw])$)+");
+                                    if (regex.test(x.value.toLowerCase())) {                                        
+                                        return true;
+                                    }   
+                                    else {
+                                        alert(alerttxt);
+                                        return false;
+                                    }
+                                    
+                                }
+                                
+                                else
+                                {
+                                    alert(missingTxt);
+                                    return false;
+                                }
+                            }
+                            
+                            
+                        </script>    -->
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+                
+                <apex:pageBlockSectionItem >
+                    {!$Label.New_Inquiry_Form_Home_Phone} <font color="red">*</font>
+                    <apex:inputText value="{!Home_Phone}" id="Home_Phone">
+                  <!--      <script type="text/javascript">
+                            function validate_homephone()
+                            {   var alerttxt = "{!$Label.New_Inquiry_Form_home_Phone_error_message}";
+                                var x=document.getElementById('{!$Component.Home_Phone}');
+                                //alert(x.value);
+                                if (x.value.length<10 || x.value.length>15) 
+                                {
+                                    alert(alerttxt);
+                                    return false;
+                                }
+                                else   
+                                {
+                                    return true;
+                                }
+                                
+                            }       
+                        </script>    -->
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.New_Inquiry_Form_Mobile_Phone}" for="Mobile_Phone"/>
+                    <apex:inputText value="{!Mobile_Phone}" id="Mobile_Phone">
+                <!--        <script type="text/javascript">
+                            function validate_mobilephone()
+                            {   
+                                var alerttxt = "{!$Label.New_Inquiry_Form_mobile_phone_error_message}";
+                                var x=document.getElementById('{!$Component.Mobile_Phone}');
+                                //If there's nothing here, don't validate it. This field is not required
+                                if (x.value.length>0) 
+                                {
+                                    if (x.value.length<10 || x.value.length>25) 
+                                    {
+                                        alert(alerttxt);
+                                        return false;
+                                    }
+                                    else   
+                                    {
+                                        return true;
+                                    }
+                                }
+                                
+                                else {
+                                     return true;
+                                }
+                                
+                            }       
+                        </script>    -->
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+                
+                <apex:pageBlockSectionItem >
+                    {!$Label.New_Inquiry_Form_Work_Phone} 
+                    <apex:inputText value="{!Work_Phone}" id="Work_Phone">
+                 <!--       <script type="text/javascript">
+                            function validate_workphone()
+                            {   
+                                var alerttxt = "{!$Label.New_Inquiry_Form_workphone_error_message}";
+                                var x=document.getElementById('{!$Component.Work_Phone}');
+                                //If there's nothing here, don't validate it. This field is not required
+                                if (x.value.length>0) 
+                                {
+                                    if (x.value.length<10 || x.value.length>15) 
+                                    {
+                                        alert(alerttxt);
+                                        return false;
+                                    }
+                                    else   
+                                    {
+                                        return true;
+                                    }
+                                }
+                                
+                                
+                                else {
+                                     return true;
+                                }
+                                
+                            }       
+                        </script>    -->
+                    </apex:inputText> 
+                </apex:pageBlockSectionItem>   
+            </apex:pageBlockSection>      
+            
+             <apex:pageBlockSection title="{!$Label.New_Inquiry_Form_Address_Information}" columns="1"> 
+             
+                 <apex:pageBlockSectionItem > 
+                    <apex:outputLabel value="{!$Label.New_Inquiry_Form_Street_Address}" for="Address"/>
+                    <apex:inputText value="{!Address}" id="Address"/> 
+                </apex:pageBlockSectionItem>   
+                 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.New_Inquiry_Form_city}" for="City"/>
+                    <apex:inputText value="{!City}" id="City"/> 
+                </apex:pageBlockSectionItem> 
+                 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.New_Inquiry_Form_State}" for="State"/> 
+                    <apex:inputText value="{!State}" id="State"/> 
+                </apex:pageBlockSectionItem> 
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.New_Inquiry_Form_Country}" for="Country">
+                    	<font color="red">*</font>
+                    </apex:outputLabel>	 
+                    <apex:selectList id="Country" value="{!country}" size="1">
+                        <apex:selectOptions value="{!countries}"/>   
+                    </apex:selectList>                       
+                </apex:pageBlockSectionItem> 
+              
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$Label.New_Inquiry_Form_Zip}" for="Zip"/>
+                    <apex:inputText value="{!Zip}" id="Zip"/> 
+                </apex:pageBlockSectionItem>                  
+            </apex:pageBlockSection>
+            
+            
+            
+            <apex:pageBlockSection title="{!$Label.New_Inquiry_Form_Campaign_Information}" columns="2" rendered="{!OppId==null}">
+                 <apex:pageBlockSectionItem >
+                    <!-- <apex:outputLabel value="Search" for="realtxt"/>
+                    <apex:inputText onkeyup="searchSel()" id="realtxt"/> -->
+                    {!$Label.New_Inquiry_Form_search} <input type="text" id="realtxt" onkeyup="searchSel()"/> 
+                </apex:pageBlockSectionItem>                  
+                
+                <apex:pageBlockSectionItem >
+                    {!$Label.New_Inquiry_Form_Campaign} <font color="red">*</font>
+                    
+                    <apex:selectList id="campaignList" value="{!campaignCode}" size="1">
+                        
+                        <apex:selectOptions value="{!campaignOptions}"/>
+                             <apex:actionSupport event="onchange" 
+                                 action="{!campaignChanged}" 
+                                 immediate="false" 
+                                 rerender="referralNotice" 
+                             />
+                             
+                            <script type="text/javascript"> 
+                     <!--           function validate_campaign( )
+                                {   
+                                    var alerttxt = "{!$Label.New_Inquiry_Form_campaign_error_message}";
+                                    var x=document.getElementById('{!$Component.campaignList}');
+                                    //alert(x.value);
+                                    if (x.value== "{!$Label.None_Option}" || x.value==null ) 
+                                    {
+                                        alert(alerttxt);
+                                        return false;
+                                    }
+                                    else   
+                                    {
+                                        return true; 
+                                    }
+                                }  -->
+                                 
+                               function searchSel() {
+                               
+                                  var input=document.getElementById('realtxt').value.toLowerCase();
+                                 //alert(input);
+                                  
+                                  var output=document.getElementById('{!$Component.campaignList}').options;
+                                  // alert(output);
+                                   
+                                  for(var i=0;i<output.length;i++) {
+                                    
+                                      //if(output[i].value.toLowerCase().indexOf(input)==0){    
+                                      if(output[i].text.toLowerCase().indexOf(input)==0){
+                                      
+                                        //alert(output[i].value.indexOf(input));                            
+                                         output[i].selected=true;
+                                          break;
+                                      }
+                                       else {
+                                       output[0].selected=true;
+                                      
+                                      }
+                                   /*if(input==''){
+                                      output[0].selected=true;
+                                      }*/
+                                  }
+                            }
+                            
+                            </script>
+                            
+                            
+                           
+                             
+                    </apex:selectList>
+                    
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputPanel id="referralNotice" >
+                     <apex:pageBlockSectionItem rendered="{!renderReferralNotice}" >
+                        
+                        <c:Notice Notice="{!$Label.New_Inquiry_Form_Referral_Notice}"/>
+                            
+                     </apex:pageBlockSectionItem>                   
+                </apex:outputPanel>
+                
+                
+            </apex:pageBlockSection> 
+        </apex:pageBlock>      
+        
+    </apex:form>
+    
+    <script type="text/javascript">
+        function gup( name )
+        {
+          name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+          var regexS = "[\\?&]"+name+"=([^&#]*)";
+          var regex = new RegExp( regexS );
+          var results = regex.exec( window.location.href );
+          if( results == null )
+            return ""; 
+          else
+            return results[1];
+        }
+        
+        function validate()
+        {   
+            return( validate_firstname() && validate_lastname() && validate_email() && validate_campus() && validate_program() && validate_timeframe() && validate_homephone()  && validate_mobilephone() && validate_workphone() && validate_specialization() && validate_campaign());         
+        }
+        
+        function validate2()
+        {   
+            return( validate_firstname() && validate_lastname() && validate_email() && validate_program() && validate_timeframe() && validate_homephone()  && validate_mobilephone() && validate_workphone() && validate_specialization());         
+        }
+        
+        
+    </script>
+    
+</apex:page>

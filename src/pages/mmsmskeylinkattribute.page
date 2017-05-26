@@ -1,0 +1,177 @@
+<apex:page standardController="MMSMSKeylinkAttribute__c" extensions="MMSMSKeylinkAttributeController" action="{!initPage}" contentType="text/html" >
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <apex:includeScript value="{!$Resource.JQueryUI}" />
+    <apex:stylesheet value="{!URLFOR($Resource.JQueryUICSS, 'css/smoothness/jquery-ui-1.8.16.custom.css')}"/>
+    <script>
+        var jq = jQuery.noConflict();
+        var ddlTableList = null;
+        var ddlFieldList = null;
+        var txtMergeField = null;
+        var txtAttrRec = null;
+        var txtAttrName = null;
+        var txtAttrValue = null;
+        var txtAttrBooleanValue = null; 
+        var txtAttrPickValue = null;
+        var txtAttrType = null;
+        jq(document).ready(function() {
+            jq('input.val').hide();
+            jq('select.val').hide();
+            ddlTableList = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.TableItem.tableList}'));
+            ddlFieldList = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.FieldItem.fieldList}'));
+            txtAttrRec = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeRecordItem.attributeRecord}'));
+            txtAttrName = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeNameItem.attributeName}'));                        
+            txtAttrValue = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeValueItem.attributeValue}'));                        
+            txtAttrBooleanValue = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeValueItem.attributeBooleanValue}'));
+            txtAttrDateValue = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeValueItem.attributeDateValue}'));      
+            txtAttrPickValue = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeValueItem.pickList}'));                  
+            txtAttrType = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeValueItem.attributeType}'));                              
+            txtAttrValue.show();
+            
+            txtAttrDateValue.datepicker({ dateFormat: 'mm/dd/yy' });
+            
+            //tableList Change Event
+            ddlTableList.bind('change',function() {
+                ddlFieldList.find('OPTION').remove();
+                txtAttrRec.val(jq(this).find('option:selected').val());
+                txtAttrName.val('');
+                if (jq(this).val() == '') {
+                    ddlFieldList.css('width','200px');
+                }
+                else {
+                    getFieldListClient(jq(this).val());
+                }
+            });
+            ddlTableList.val(txtAttrRec.val());
+            getFieldListClient(ddlTableList.val());
+            setValueControl(txtAttrType.val(), true);
+        });
+        var getStrippedComponentId = function(id){
+            return id.replace(/:/g,'\\:');
+        }
+        function fieldSectionJS() {
+            ddlFieldList = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.FieldItem.fieldList}'));
+            if (txtAttrName.val() != '' && txtAttrType.val() != '') {
+                ddlFieldList.val(txtAttrName.val() + '___' + txtAttrType.val().toUpperCase());
+            }
+            ddlFieldList.bind('change',function() {
+                var vl = jq(this).find('option:selected').val();
+                txtAttrValue.val('');
+                if (vl.indexOf('___') >= 0) {
+                    txtAttrName.val(vl.substring(0,vl.indexOf('___')));
+                    setValueControl(vl.substring(vl.indexOf('___') + 3));
+                }
+                else {
+                    txtAttrName.val('');
+                }
+            });
+        }
+        function setValueControl(type, atLoad) {
+            jq('input.val').hide();
+            jq('select.val').hide();
+            type = type.toLowerCase();
+            txtAttrType.val(type);
+            if (type == 'boolean') {
+                txtAttrBooleanValue.show();
+            }
+            else if (type == 'datetime' || type == 'date') {
+                txtAttrDateValue.show();
+            }
+            else if (type == 'picklist') {
+                if (atLoad) {
+                    txtAttrPickValue.show();
+                    //txtAttrPickValue.find('OPTION').remove();
+                    //getPickListClient(txtAttrRec.val(),txtAttrName.val());
+                }
+                else {
+                    var fld = ddlFieldList.val();
+                    txtAttrPickValue.show();
+                    if (fld.indexOf('___') >= 0) {
+                        txtAttrPickValue.find('OPTION').remove();
+                        getPickListClient(ddlTableList.val(),fld.substring(0,fld.indexOf('___')));
+                    }
+                }
+            }
+            else {
+                txtAttrValue.show();
+            }    
+        }
+        function pickListSectionJS() {
+            /*
+            txtAttrPickValue = jq('#' + getStrippedComponentId('{!$Component.mainForm.mainPB.AttributeSection.AttributeValueItem.pickList}'));
+            txtAttrPickValue.val(txtAttrPickValueH.val());
+            txtAttrPickValue.bind("change",function() {
+                txtAttrPickValueH.val(jq(this).val());
+            });
+            */
+        }
+    </script>
+    <apex:form id="mainForm">
+        <apex:actionFunction action="{!getFieldListJson}" name="getFieldListClient" reRender="fieldList" oncomplete="fieldSectionJS()">
+            <apex:param name="tableNameParam" assignTo="{!selectedTable}" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!getPickListJson}" name="getPickListClient" reRender="pickList" oncomplete="pickListSectionJS()">
+            <apex:param name="tableNameParam" assignTo="{!selectedTable}" value="" />
+            <apex:param name="fieldNameParam" assignTo="{!selectedField}" value="" />
+        </apex:actionFunction>
+        <apex:pageBlock title="MMSMS Keylink Attribute" id="mainPB">
+            <apex:pageMessages showDetail="false" escape="true"/>
+            <apex:pageBlockButtons id="pbButtons">
+                    <apex:commandButton value="Save" action="{!saveKeylinkAttribute}"/> 
+                    <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="false" id="AttributeSection" title="Keylink Attribute" columns="1">
+               <apex:pageBlockSectionItem id="KeylinkItem">
+                    <apex:outputLabel value="Keylink Id/Keyword" for="keyLink"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="keyLinkPanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText id="keyLink" style="width:200px" disabled="true" value="{!keyLink}" />   
+                        <apex:inputText id="keyword" style="width:200px" disabled="true" value="{!keyword}" />   
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="TableItem">
+                    <apex:outputLabel value="Record Type" for="tableList"></apex:outputLabel>    
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList id="tableList" value="{!selectedTable}" multiselect="false" size="1">
+                            <apex:selectOptions value="{!tableList}"/>            
+                        </apex:selectList>
+                    </apex:outputPanel>            
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="FieldItem">
+                    <apex:outputLabel value="Fields" for="fieldList"></apex:outputLabel>    
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                        <apex:selectList id="fieldList" value="{!selectedField}" multiselect="false" size="1" style="width:200px">
+                            <apex:selectOptions value="{!fieldList}"/>            
+                        </apex:selectList>
+                    </apex:outputPanel>            
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="AttributeRecordItem">
+                    <apex:outputLabel value="Attribute Record" for="attributeRecord"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="attributeRecordPanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText id="attributeRecord" style="width:200px" value="{!attributeRecord}" />   
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="AttributeNameItem">
+                    <apex:outputLabel value="Attribute Name" for="attributeName"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="attributeNamePanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText id="attributeName" style="width:200px" value="{!attributeName}" />   
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="AttributeValueItem">
+                    <apex:outputLabel value="Attribute Value" for="attributeValue"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" id="attributeValuePanel">
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputHidden id="attributeType" value="{!attributeType}" />
+                        <apex:inputText id="attributeValue" style="width:200px" value="{!attributeValue}" styleClass="val" />
+                        <apex:inputCheckbox id="attributeBooleanValue" styleClass="val" value="{!attributeBooleanValue}" />
+                        <apex:inputText id="attributeDateValue" styleClass="val" value="{!attributeDateValue}" />
+                        <apex:selectList id="pickList" styleClass="val" size="1" multiselect="false" value="{!attributePickList}">
+                            <apex:selectOptions value="{!pickList}" />
+                        </apex:selectList>
+                    </apex:outputPanel>                                               
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

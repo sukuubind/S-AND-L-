@@ -1,0 +1,35 @@
+<apex:page showheader="true" sidebar="true"  standardController="Opportunity" extensions="CopyAdmissionsDocumentsController" >
+	<apex:form >
+		<apex:pageBlock title="" mode="view">
+		      
+		    <apex:pageBlockButtons >
+		        <apex:commandbutton value="Copy Templates to Student" action="{!CopyDocs}" />
+		        <apex:commandbutton value="Cancel" action="{!Cancel}" />
+		    </apex:pageBlockButtons>
+		       
+		    <apex:pageBlockSection title="Copy Templates to Student" columns="1" collapsible="false">
+					
+					<apex:outPutText rendered="{!errorMsg != ''}" style="color: red;" value="{!errorMsg}"/><br/>
+					
+					<center>
+						<apex:pageBlockTable width="100%" value="{!templates}" var="t"> 
+						
+							<apex:column >
+					        	<apex:facet name="header">Name</apex:facet>         
+					            <apex:outputText value="{!t.name}"/>
+					        </apex:column>
+					        
+					        <apex:column >
+					        	<apex:facet name="header">Type</apex:facet>         
+					            <apex:outputText value="{!t.Type__c}"/>
+					        </apex:column>
+					        <apex:column >
+					        	<apex:facet name="header">Comments</apex:facet>         
+					            <apex:outputText value="{!t.Comments__c}"/>
+					        </apex:column>
+					</apex:pageBlockTable>
+				</center>
+			</apex:pageBlockSection> 
+		</apex:pageBlock>
+	</apex:form>	
+</apex:page>

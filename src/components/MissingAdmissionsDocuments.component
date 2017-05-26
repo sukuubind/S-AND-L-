@@ -1,0 +1,20 @@
+<apex:component access="global" allowDML="true" controller="AdmissionsDocsController">
+    <apex:attribute name="oppId"  assignTo="{!OpptyId}" description="Opportunity ID" type="string" required="false" />
+    
+    <table border="0" width="80%">
+        <tr>
+           
+            <th align="left"> Type</th>
+            <th align="left"> Detail</th>
+            <th align="left"> Comments</th>
+
+        </tr>
+        <apex:repeat value="{!missingDocsList}" var="doc" id="docs">
+            <tr>                
+                <td>{!doc.RecordType.Name}</td>
+                <td>{!doc.Detail__c}</td>
+                <td>{!doc.Comments__c}</td>             
+            </tr>       
+        </apex:repeat>
+    </table>
+</apex:component>

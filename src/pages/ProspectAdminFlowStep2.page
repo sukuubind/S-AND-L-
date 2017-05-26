@@ -1,0 +1,149 @@
+<apex:page standardcontroller="Account" extensions="ProspectAdminFlowController" showheader="false" sidebar="false">
+<c:ProspectHeader />
+<script>
+    function confirmCancel()
+    {
+        var isCancel = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to cancel?");
+        if (isCancel) 
+        {
+            window.top.close();
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        return false;
+    }
+    function confirmStartOver()
+    {
+        var isStart = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to start over?");
+        if (isStart) 
+        {
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        return false;
+    
+    }
+</script>
+
+<apex:form >
+
+     <style>
+        tr.headerRow .TableTitle {
+            color: #818285 !important; 
+            font-size: 14px !important;
+        }
+    </style>
+
+    <apex:pageBlock >
+        <c:ProspectPageHeader styleClass="pageHeader" stepValue="Step 2 of 4" required="true" acctName="{!acctName}" VFPageName="Step 2"/> <br/>
+        <apex:pageMessages rendered="{!isError}"/>
+        <div align="center">
+            <apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+                                onclick="return confirmStartOver()" immediate="true"/>
+  <!--          <apex:commandButton action="{!step1}" value="Previous" styleClass="buttons"/>  -->
+            <apex:commandButton action="{!createRule}" value="Next" styleClass="buttons" rendered="{!(chooseTeam&&emptyRule&&!isDefault)}"/>
+            <apex:commandButton action="{!step4}" value="Next" styleClass="buttons" rendered="{!(chooseTeam&&isDefault)}"/>
+            <apex:commandButton action="{!createRule}" value="Next" styleClass="buttons" rendered="{!createTeam}"/>
+            <apex:commandButton action="{!createRule}" value="Next" styleClass="buttons" rendered="{!cloneTeam}"/>
+            <apex:commandButton action="{!step3}" value="Next" styleClass="buttons" rendered="{!(chooseTeam&&!emptyRule&&!isDefault)}"/>
+            <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+        </div><br/>
+            
+        <apex:outputLabel styleclass="control-label" value="Team Name" rendered="{!createTeam}" />
+        <apex:inputText styleClass="form-control" value="{!teamName}" rendered="{!createTeam}" maxlength="255" style="width: 255px;"/><br/>
+        <apex:outputLabel styleclass="control-label" value="Escalation Exempt" rendered="{!createTeam}" />
+        <apex:inputCheckbox value="{!teamExempt}" rendered="{!createTeam}"/>
+        <br/><br/>
+
+        <apex:outputPanel id="OthrUsers" rendered="{!(createTeam&&allUsers.size!=0)}" >
+        <apex:outputText value="Members available to add" styleClass="pageblockTable"/>
+   
+            <apex:pageBlockTable value="{!allUsers}" var="o" width="200px">
+                <apex:column headerValue="Select" width="20px" headerClass="TableTitle">
+                <apex:inputCheckbox value="{!o.selected}"/>
+                </apex:column>
+                <apex:column headerValue="User Name" value="{!o.usrName}" width="100px" headerClass="TableTitle"/>
+            </apex:pageBlockTable>   
+        </apex:outputPanel>
+            
+            
+        <apex:outputLabel styleclass="control-label" value="Team Name" rendered="{!chooseTeam}" />
+            <apex:inputText styleClass="form-control" value="{!teamName}" rendered="{!chooseTeam}" maxlength="255" style="width: 255px;"/><br/>
+        <apex:outputLabel styleclass="control-label" value="Escalation Exempt" rendered="{!chooseTeam}" />
+        <apex:inputCheckbox value="{!teamExempt}" rendered="{!chooseTeam}"/>
+            
+        <apex:outputPanel id="ChosenTeam" rendered="{!chooseTeam}" >
+        <br/><br/> 
+        <apex:outputText value="Members in Team" styleClass="pageblockTable"/>
+        
+        
+        
+        <apex:pageBlockTable value="{!members}" var="m">
+            <apex:column headerValue="Select" width="20px" headerClass="TableTitle">
+                <apex:inputCheckbox value="{!m.selected}"/>
+            </apex:column>
+            <apex:column headerValue="Member Name" value="{!m.memberName}" width="100px" headerClass="TableTitle"/>
+        </apex:pageBlockTable>
+
+        </apex:outputPanel> 
+                
+        <apex:outputPanel id="OtherUsers" rendered="{!(chooseTeam&&otherUsers.size!=0)}" >
+            <apex:outputText value="Members available to add" styleClass="pageblockTable"/>
+            <apex:pageBlockTable value="{!otherUsers}" var="o">
+                <apex:column headerValue="Select" width="20px" headerClass="TableTitle">
+                <apex:inputCheckbox value="{!o.selected}"/>
+                </apex:column>
+                <apex:column headerValue="User Name" value="{!o.usrName}" width="100px" headerClass="TableTitle"/>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+        
+        <apex:outputLabel styleclass="control-label" value="Team Name" rendered="{!cloneTeam}" />
+            <apex:inputText styleClass="form-control" value="{!teamName}" rendered="{!cloneTeam}" maxlength="255" style="width: 255px;"/><br/>
+        <apex:outputLabel styleclass="control-label" value="Escalation Exempt" rendered="{!cloneTeam}" />
+        <apex:inputCheckbox value="{!teamExempt}" rendered="{!cloneTeam}"/>
+            
+        <apex:outputPanel id="ChosenTeam1" rendered="{!cloneTeam}" >
+        <br/><br/>
+        <apex:outputText value="Members in Team" styleClass="pageblockTable"/>
+        <apex:pageBlockTable value="{!members}" var="m">
+            <apex:column headerValue="Select" width="20px" headerClass="TableTitle">
+                <apex:inputCheckbox value="{!m.selected}"/>
+            </apex:column>
+            <apex:column headerValue="Member Name" value="{!m.memberName}" width="100px" headerClass="TableTitle"/>
+        </apex:pageBlockTable>
+
+        </apex:outputPanel>
+                
+        <apex:outputPanel id="OtherUsers1" rendered="{!(cloneTeam&&otherUsers.size!=0)}" >
+            <apex:outputText value="Members available to add" styleClass="pageblockTable"/>
+            <apex:pageBlockTable value="{!otherUsers}" var="o">
+                <apex:column headerValue="Select" width="20px" headerClass="TableTitle">
+                <apex:inputCheckbox value="{!o.selected}" />
+                </apex:column>
+                <apex:column headerValue="User Name" value="{!o.usrName}" width="100px" headerClass="TableTitle"/>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+            
+        <div align="center">
+            <apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+                                onclick="return confirmStartOver()" immediate="true"/>
+    <!--        <apex:commandButton action="{!step1}" value="Previous" styleClass="buttons"/>  -->
+            <apex:commandButton action="{!createRule}" value="Next" styleClass="buttons" rendered="{!(chooseTeam&&emptyRule&&!isDefault)}"/>
+            <apex:commandButton action="{!step4}" value="Next" styleClass="buttons" rendered="{!(chooseTeam&&isDefault)}"/>
+            <apex:commandButton action="{!createRule}" value="Next" styleClass="buttons" rendered="{!createTeam}"/>
+            <apex:commandButton action="{!createRule}" value="Next" styleClass="buttons" rendered="{!cloneTeam}"/>
+            <apex:commandButton action="{!step3}" value="Next" styleClass="buttons" rendered="{!(chooseTeam&&!emptyRule&&!isDefault)}"/>
+            <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+        </div><br/>
+        
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

@@ -1,0 +1,7 @@
+<apex:page standardController="Contact">
+  <center>
+  <apex:outputPanel layout="block" rendered="{!contact.Do_Not_Register__c}" style="color:red">
+      <apex:image url="{!$Resource.DoNotRegister}" alt="Do Not Register" height="35px" width="743px"/>
+  </apex:outputPanel>
+  </center>
+</apex:page>

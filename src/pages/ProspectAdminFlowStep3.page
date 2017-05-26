@@ -1,0 +1,104 @@
+<apex:page standardcontroller="Account" extensions="ProspectAdminFlowController" showheader="false" sidebar="false">
+<c:ProspectHeader />
+<script>
+
+    function confirmCancel()
+    {
+        var isCancel = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to cancel?");
+        if (isCancel) 
+        {
+            window.top.close();
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        return false;
+    }
+    
+     function validateChange()
+     {
+          var isCancel = confirm("Are you sure you wish to change the team rule?");
+          if (isCancel) 
+          {
+                return true;
+          }
+          else
+          {
+                return false; 
+          }
+          return false;
+     }
+    function confirmStartOver()
+    {
+        var isStart = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to start over?");
+        if (isStart) 
+        {
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        return false;
+    
+    }
+    
+</script>   
+<apex:form id="step3Form">
+
+    <apex:pageBlock >
+        <c:ProspectPageHeader styleClass="pageHeader" stepValue="Step 3 of 4" required="true" acctName="{!acctName}" VFPageName="Step 3"/>  <br/>
+        
+        <div align="center">
+            <apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+                                onclick="return confirmStartOver()" immediate="true"/>
+            <apex:commandButton action="{!editRule}" value="Edit Rule" styleClass="buttons"/>
+            <apex:commandButton action="{!step2Choose}" value="Previous" rendered="{!chooseTeam}" styleClass="buttons"/>
+            <apex:commandButton action="{!step2Create}" value="Previous" rendered="{!createTeam}" styleClass="buttons"/>
+            <apex:commandButton action="{!step4}" value="Next" styleClass="buttons"/>
+            <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                                onclick="return confirmCancel()" immediate="true"/>
+        </div><br/>
+        
+        <div>
+            <h1><b> <apex:outputText value=" {!teamName}" styleClass="prospectText" style="font-size:16px; font-weight:bold"/>  </b></h1>
+        </div><br/>
+        
+         <apex:outputPanel id="ruleDet"> 
+         <apex:outputText value="Rule Selected for the team" styleClass="pageblockTable"/><br/><br/>
+         
+         <apex:repeat value="{!displayRuleSummary}" var="dis">
+            
+            <apex:outputText value="{!dis}" escape="false" styleClass="prospectText"/>
+            <br/>
+         </apex:repeat>
+        
+        </apex:outputPanel>
+      <!--       <br/>
+        <apex:outputPanel >
+            <apex:outputText value="All available rules" styleClass="pageblockTable"/>
+            <apex:selectRadio id="allRuleId1" value="{!selectedRuleSummary}" layout="pageDirection" onchange="getRuleDetails();" onclick="return validateChange()" rendered="{!chooseTeam}">
+                <apex:selectOptions value="{!allRuleSets}" />
+            </apex:selectRadio><p/>
+            <apex:selectRadio id="allRuleId2" value="{!selectedRuleSummary}" layout="pageDirection" onchange="getRuleDetails();" rendered="{!createTeam}">
+                <apex:selectOptions value="{!allRuleSets}" />
+            </apex:selectRadio><p/>
+        </apex:outputPanel>
+        -->
+        
+        <div align="center">
+        <apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+                            onclick="return confirmStartOver()" immediate="true"/>
+        <apex:commandButton action="{!editRule}" value="Edit Rule" styleClass="buttons"/>
+        <apex:commandButton action="{!step2Choose}" value="Previous" rendered="{!chooseTeam}" styleClass="buttons"/>
+        <apex:commandButton action="{!step2Create}" value="Previous" rendered="{!createTeam}" styleClass="buttons"/>
+        <apex:commandButton action="{!step4}" value="Next" styleClass="buttons"/>
+        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                            onclick="return confirmCancel()" immediate="true"/>
+        </div>
+    </apex:pageBlock>
+    
+</apex:form>
+</apex:page>

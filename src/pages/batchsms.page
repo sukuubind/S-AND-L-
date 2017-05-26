@@ -1,0 +1,716 @@
+<apex:page controller="BatchSMSController" action="{!init}" contentType="text/html">
+<apex:stylesheet value="{!URLFOR($Resource.JQueryUICSS, 'css/smoothness/jquery-ui-1.8.16.custom.css')}"/>
+<apex:includeScript value="{!$Resource.jquery}" />
+<apex:includeScript value="{!$Resource.JQueryUI}" />
+<script>
+    var jq = jQuery.noConflict();
+    var pNumId;
+    var pNumId;
+    var msgId;
+    var charMsg;
+    var headerId;
+    var footerId;
+    var hfSaveId;
+    var recId;
+    var pMessageId;
+    var tabDetailsId;
+    var previewBtn;
+    var lastEvent;
+    var multiId;
+    
+    var templateLen = 0;
+    
+    var multiChecked = false;
+    
+    var arrFields = [];
+      
+    jq(document).ready(function(){       
+       pNumId = getStrippedComponentId("{!$Component.mainForm.mainPB.phoneNumbers}");
+       selectAllId = getStrippedComponentId("{!$Component.mainForm.mainPB.selectAll}");
+       msgId =  getStrippedComponentId("{!$Component.mainForm.mainPB.messageText}");
+       charMsg = getStrippedComponentId("{!$Component.mainForm.mainPB.charCountMessage}");
+       multiId =  getStrippedComponentId("{!$Component.mainForm.mainPB.multipart}");
+       headerId =  getStrippedComponentId("{!$Component.mainForm.mainPB.headerText}");
+       footerId =  getStrippedComponentId("{!$Component.mainForm.mainPB.footerText}");
+       hfSaveId = getStrippedComponentId("{!$Component.mainForm.mainPB.HFSaveSection.HFSaveSItem.HFsave}"); 
+       recId  = getStrippedComponentId("{!$Component.mainForm.mainPB.PreviewSection.RecSItem.rec}"); 
+       pMessageId  = getStrippedComponentId("{!$Component.mainForm.mainPB.PreviewSection.PMessageSItem.pMessage}"); 
+       tabDetailsId =  getStrippedComponentId("{!$Component.mainForm.mainPB.tabPreview}");
+       previewBtn = getStrippedComponentId("{!$Component.mainForm.mainPB.pbButtons.pButton}");
+       scheduleCheckId = getStrippedComponentId("{!$Component.mainForm.mainPB.scheduleCheck}");
+       startDateId = getStrippedComponentId("{!$Component.mainForm.mainPB.startDate}");
+       startTimeId = getStrippedComponentId("{!$Component.mainForm.mainPB.startTime}");
+       templateListId = getStrippedComponentId("{!$Component.mainForm.mainPB.templateList}");
+       msgIdRaw = "{!$Component.mainForm.mainPB.messageText}";
+       templateTextId = getStrippedComponentId("{!$Component.mainForm.templateText}"); 
+       prefilledCountId = getStrippedComponentId("{!$Component.mainForm.prefilledCount}");
+       loadingMsgId = getStrippedComponentId("{!$Component.mainForm.mainPB.loadingMessage}"); 
+       keylinkListId = getStrippedComponentId("{!$Component.mainForm.mainPB.keylinkKeywordList}"); 
+       savedSearchesListId = getStrippedComponentId("{!$Component.mainForm.mainPB.savedSearchesList}"); 
+       
+       var dateVal = jq('#' + startDateId).val();
+       jq('#' + startDateId).datepicker();
+       jq('#' + startDateId).datepicker("option", "dateFormat", 'yy-mm-dd' );
+       jq('#' + startDateId).val(dateVal);
+       
+       //jq('#' + selectAllId).bind('click',function(event){selectAll(pNumId,jq('#' + selectAllId).attr('checked') != undefined)});
+       jq('#' + previewBtn).click(showPreviewFromBtn);
+       jq('#' + charMsg).html((jq('#' + msgId).val().length + jq('#' + headerId).val().length + jq('#' + footerId).val().length) + ' of 160 characters')
+       jq('#' + headerId).keypress(onHFKeyPress).keyup(countCharacters);
+       jq('#' + footerId).keypress(onHFKeyPress).keyup(countCharacters);
+       jq('#'+ msgId).keypress(onKeyPress).keyup(countCharacters).bind('paste', onPaste);
+       jq('#' + multiId).click(multiClick);
+       jq('#' + startDateId).attr('disabled','disabled');
+       jq('#' + startTimeId).attr('disabled','disabled');
+       jq('#' + scheduleCheckId).click(scheduleClick);
+       jq('#' + templateListId).bind('click',onTemplateListChange);
+       
+       scheduleClick();
+       
+       jq('#' + footerId).val(replaceAll(jq('#' + footerId).val(), '_-_', '\n'));
+       
+       if (jq.browser.msie) {
+           window.onerror = function() {
+               return true;
+           };
+       }
+       //jq('#' + pNumId).unbind('change');
+       //jq('#' + pNumId).bind('change', function() { refreshTemplateLength(); });
+       refreshTemplateLength();
+       //characterCount();
+       multiChecked = jq('#' + multiId)[0].checked;
+    });
+    
+    function selectAll(selectBox,selectAll) {
+       
+       
+        if(selectAll)
+            jq('#' + selectBox + ' option').attr('selected','selected');
+        else
+            jq('#' + selectBox + ' option').removeAttr('selected'); 
+        
+    }
+    
+    var showPreview = function(){
+        var firstEntry = '';
+        var selEntries = jq('#' + pNumId).find('option:selected');
+        if (selEntries && selEntries.get().length > 0) {
+            firstEntry = selEntries.eq(0) != null ? selEntries.eq(0).text() : '';
+        }
+        
+        jq('#' + recId).val(firstEntry);
+        getTemplateContentPreview();
+        //jq('#' + pMessageId).val(jq('#' + headerId).val() + jq('#' + msgId).val() + jq('#' + footerId).val());
+    }
+    
+    var showPreviewFromBtn = function(){
+        showPreview();    
+        jq('#' + tabDetailsId + '_lbl').click();        
+        return false;
+    }
+    
+    var multiClick = function(event){
+        msg = jq('#' + msgId).val();
+        maxchars = getMaxChars(msgId);
+        headerLength = jq('#' + headerId).val().length;
+        footerLength = jq('#' + footerId).val().length;
+        //if(multiChecked && ( getStrippedMessage().length + templateLen + headerLength + footerLength) > 160){
+        if (multiChecked && getCountCharacters() > 160) {
+            var answer = confirm('The Message size is more than 160 chars, if you continue your message will be truncated to 160 characters.\r\nAre You Sure you want to do it');
+            if(!answer) {
+                jq(event.target).attr('checked');
+                return false;
+            } else {
+                //jq('#' + msgId).val(msg.substr(0, maxchars - headerLength - footerLength ));
+                 jq('#' + msgId).val(msg.substr(0, msg.length - (getCountCharacters() - 160)));
+            }
+        }
+        
+        multiChecked = jq(event.target)[0].checked;
+        var charlength = getStrippedMessage().length + templateLen + headerLength + footerLength;
+        showCharMessage(charlength,maxchars);
+        if (multiChecked) {
+            jq('#' + multiId).val('true');
+        }
+        else {
+            jq('#' + multiId).val('false');
+        }
+        countCharacters();
+    }
+    
+    var showCharMessage = function(charlength, maxchars){
+        var total = (multiChecked)? '(153 * ' + (Math.ceil(charlength / 153)) + ')' : maxchars;
+        jq('#' + charMsg).html(charlength + ' of ' + total + ' characters');
+    }
+
+    var getStrippedComponentId = function(id){
+        return id.replace(/:/g,'\\:');
+    }
+
+    var getMaxChars = function(type){
+        return 160;
+    }
+
+    var countCharacters = function(event){
+        var et = jq(this).attr('elementType');
+        var maxchars = getMaxChars(et);
+        var charlength = 0;
+        var val = jq('#' + msgId).val();
+        var arrFields1 = [];
+        var fieldsStatus = false;
+        var fieldsStatus1 = false;
+        
+        charlength = getStrippedMessage().length + templateLen + jq('#' + headerId).val().length + jq('#' + footerId).val().length;
+        headerLength = jq('#' + headerId).val().length;
+        footerLength = jq('#' + footerId).val().length;
+
+        // truncate if more than allowed characters entered. case: onPaste
+        if(!multiChecked && charlength > maxchars){
+            jq('#' + msgId).val(val.substr(0, maxchars - headerLength - footerLength));
+            charlength = maxchars;
+        }
+        
+        showCharMessage(charlength,maxchars);
+        
+        arrFields1 = getSplittedFields(jq('#' + msgId).val());
+        arrFields1 = arrFields1 ? arrFields1 : [];
+        if (arrFields1.length != arrFields.length) {
+            fieldsStatus = true;
+        }
+        else {
+            for(var x=0;x<arrFields1.length;x++) {
+                fieldsStatus1 = true;
+                for (var y=0;y<arrFields.length;y++) {
+                    if (arrFields1[x] == arrFields[y]) {
+                        fieldsStatus1 = false;
+                        break;
+                    }
+                }
+                if (fieldsStatus1) {
+                    fieldsStatus = true;
+                    break;
+                }
+            }
+        }
+        if (fieldsStatus) {
+            arrFields = arrFields1;
+            refreshTemplateLength();
+        }
+    }    
+    
+    var getCountCharacters = function(event){
+    
+        var et = jq(this).attr('elementType');
+        var maxchars = getMaxChars(et);
+        var charlength = 0;
+        var val = jq('#' + msgId).val();
+        charlength = getStrippedMessage().length + templateLen + jq('#' + headerId).val().length + jq('#' + footerId).val().length;
+        headerLength = jq('#' + headerId).val().length;
+        footerLength = jq('#' + footerId).val().length;
+
+        // truncate if more than allowed characters entered. case: onPaste
+        if(!multiChecked && charlength > maxchars){
+            jq('#' + msgId).val(val.substr(0, maxchars - headerLength - footerLength));
+            charlength = maxchars;
+        }
+        showCharMessage(charlength,maxchars);
+        return charlength;
+    } 
+    
+    var onKeyPress = function(event){
+        if(multiChecked) return true;
+    
+        if(event.which == 0
+            || event.which == 8
+            ) return true;
+        var maxchars = getMaxChars(jq(event.target).attr('elementType'));
+
+        //return (getStrippedMessage().length + templateLen  + jq('#' + headerId).val().length + jq('#' + footerId).val().length) < maxchars;
+        return getCountCharacters() < maxchars;
+    }
+    
+    var onHFKeyPress = function(event){
+        if(event.which == 0
+            || event.which == 8
+            ) return true;
+           
+       if(jq(event.target).val().length >= 80) {
+           return false;
+       }    
+           
+       //if( multiChecked || (getStrippedMessage().length + templateLen + jq('#' + headerId).val().length + jq('#' + footerId).val().length) < 160){
+       if (multiChecked || getCountCharacters() < maxchars) {
+           return true;
+       }
+       
+       return false;
+    }
+    
+    var onPaste = function(event){
+        setTimeout(adjustMessageText,0);
+
+    };
+    
+    var adjustMessageText = function(){
+    
+        multiChecked = jq('#' + multiId).attr('checked');
+        var maxchars = getMaxChars('nothing');
+        headerLength = jq('#' + headerId).val().length;
+        footerLength = jq('#' + footerId).val().length;
+        var val = jq('#' + msgId).val();
+
+        if(!multiChecked && getStrippedMessage().length + templateLen + headerLength + footerLength > maxchars){         
+            jq('#' + msgId).val(val.substr(0, maxchars - headerLength - footerLength ));
+            charlength = maxchars;
+        }
+        
+        showCharMessage(charlength,maxchars);      
+    }
+    
+    var scheduleClick = function(event){        
+        id = (event == undefined || event == false)? ('#' + scheduleCheckId) : event.target ;         
+        if(jq(id).is(":checked")){
+            jq('#' + startDateId).removeAttr('disabled');
+            jq('#' + startTimeId).removeAttr('disabled');            
+        } else {
+            jq('#' + startDateId).attr('disabled','disabled');
+            jq('#' + startTimeId).attr('disabled','disabled');
+        }
+    }
+    
+    function onTemplateListChange(event){
+        var myValue = jq(event.target).val();
+        
+        if (myValue == null || typeof(myValue) == 'undefined') return;
+        
+        getTemplateContent(myValue, jq('#' + msgId).val());
+        
+        disableOnTemplateLoad();
+       /*
+        if (document.selection) {
+            myField.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            myField.focus();
+        }
+        if (myField.selectionStart || myField.selectionStart == '0') {
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+            myField.value = myField.value.substring(0, startPos)
+            + myValue
+            + myField.value.substring(endPos, myField.value.length);
+        } else {
+            myField.value += myValue;
+        }*/
+        
+    }
+    
+    function onGetTemplateContentComplete(){
+        myValue = replaceAll(jq('#' + templateTextId).val(), '###', '\n');        
+        txtToAdd = myValue.replace(/\[([^\]])*\]/g,'').length;
+        myField = document.getElementById(msgIdRaw);
+        prefilledCount = jq('#' + prefilledCountId).val();
+        newTemplateLen = parseInt(prefilledCount);
+        enableOnTemplateLoad();
+        //alert(templateLen);
+        //alert(getStrippedMessage().length + txtToAdd + templateLen + getHeaderLength() + getFooterLength());
+        if(!multiChecked && getStrippedMessage().length + txtToAdd + newTemplateLen + getHeaderLength() + getFooterLength() > getMaxChars()){                        
+            alert('Cannot insert Template. inserting template is exceeding the maximum character limit');
+            return; 
+        }
+        
+        templateLen = newTemplateLen;
+        
+        if (document.selection) {
+            myField.focus();
+            sel = document.selection.createRange();
+            //sel.text = myValue;
+            myField.focus();
+        }
+        if (myField.selectionStart || myField.selectionStart == '0') {
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+            myField.value = myField.value.substring(0, startPos)
+            + myValue
+            + myField.value.substring(endPos, myField.value.length);
+        } else {
+            myField.value += myValue;
+        }
+        
+        countCharacters();
+        
+        //alert(prefilledCount);
+        
+        getTemplateContentPreview();
+        
+        arrFields = getSplittedFields(jq('#' + msgId).val());
+    }
+    
+    function getSplittedFields(msg) {
+        var str = '';
+        var arrFields1 = [];
+        var arrFields2 = [];
+        arrFields1 = msg.split(/(?=\[!)(.*?\])/);
+        if(arrFields1 && arrFields1.length > 0) {
+            for(var x=0;x<arrFields1.length;x++) {
+                if (arrFields1[x].indexOf('[!') == 0 && arrFields1[x].lastIndexOf(']') == arrFields1[x].length - 1) {
+                    arrFields2.push(arrFields1[x]);
+                }
+            }
+        }
+        return arrFields2;
+    }
+    
+    function onGetTemplateContentPreviewComplete() {
+    }
+    
+    function disableOnTemplateLoad(){
+        jq('#' + msgId).attr('disabled','disabled');
+        jq('#' + templateListId).attr('disabled','disabled');
+        jq('#' + loadingMsgId).html('Loading Template.. Please Wait');        
+    }
+    
+    function enableOnTemplateLoad(){
+        jq('#' + msgId).removeAttr('disabled');
+        jq('#' + templateListId).removeAttr('disabled');
+        jq('#' + loadingMsgId).html('');
+    } 
+    
+    
+    function getStrippedMessage(){
+        return jq('#' + msgId).val().replace(/\[([^\]])*\]/g,'');
+    }
+    
+    function replaceAll(txt, replace, with_this) {
+      return txt.replace(new RegExp(replace, 'g'),with_this);
+    }
+    
+    function getHeaderLength(){
+        return jq('#' + headerId).val().length;
+    }
+    
+    function getFooterLength(){
+        return jq('#' + footerId).val().length;
+    }
+    
+    function onKeylinkKeywordsClick(chk){        
+        var keyList = jq('#' + keylinkListId);
+        var srchList = jq('#' + savedSearchesListId);
+        var reciList = jq('#' + pNumId);
+        var chkAll = jq('#' + selectAllId);
+        keyList.find('option').eq(0).attr('selected','selected');
+        srchList.find('option').eq(0).attr('selected','selected');
+        chkAll.attr('checked',false);
+        reciList.find('option').each(function () { jq(this).remove(); });
+        getKeylinkKeywords();
+        if (chk.value == 'ss')
+            getSavedSearchCandidates('');
+        else if (chk.value == 'kk')
+            getKeylinkCandidates('');
+    }
+    
+    function onGetKeylinkKeywordsComplete(){
+        
+    }
+    
+    function onKeywordListClick(event){
+        jq('#' + keylinkListId).data('isEnabled',true);
+        jq('#' + pNumId).attr('disabled','disabled');        
+        jq('#' + keylinkListId).attr('disabled','disabled');                
+        getKeylinkCandidates(jq('#' + keylinkListId).val());
+        jq('#' + selectAllId).attr('checked',false);
+    }
+    
+    function onSavedSearchListClick(event){
+       jq('#' + savedSearchesListId).data('isEnabled',true);
+       jq('#' + pNumId).attr('disabled','disabled');        
+       jq('#' + savedSearchesListId).attr('disabled','disabled');        
+       getSavedSearchCandidates(jq('#' + savedSearchesListId).val());
+       jq('#' + selectAllId).attr('checked',false);       
+    }
+    
+    function onCandidateListDone(){
+        jq('#' + pNumId).removeAttr('disabled');
+        if (jq('#' + savedSearchesListId).data('isEnabled') === true) {
+            jq('#' + savedSearchesListId).data('isEnabled', false);
+            jq('#' + savedSearchesListId).removeAttr('disabled');
+        }
+        if (jq('#' + keylinkListId).data('isEnabled') === true) {
+            jq('#' + keylinkListId).data('isEnabled', false);
+            jq('#' + keylinkListId).removeAttr('disabled');
+        }
+    }
+    
+    function selectAllOnComplete() {
+        refreshTemplateLength();
+    }
+    
+    function refreshTemplateLength() {
+        getRefreshedTemplateLength(jq('#' + msgId).val());
+        disableOnTemplateLoad();
+    }
+    
+    function refreshTemplateLengthComplete() {
+        prefilledCount = jq('#' + prefilledCountId).val();
+        newTemplateLen = parseInt(prefilledCount);
+        if(!multiChecked && getStrippedMessage().length + newTemplateLen + getHeaderLength() + getFooterLength() > getMaxChars()){                        
+            alert('Cannot insert Template. inserting template is exceeding the maximum character limit');
+            return; 
+        }
+        templateLen = newTemplateLen;
+        countCharacters();
+        enableOnTemplateLoad();
+    }
+    
+    function onSelectionChangeComplete() {
+        refreshTemplateLength();
+    }
+</script>
+  <!-- Begin Default Content REMOVE THIS -->
+    <apex:sectionHeader title="Task" subtitle="Send SMS"/>
+  <!-- End Default Content REMOVE THIS -->
+    <apex:form id="mainForm">
+    <apex:actionFunction name="getTemplateContentPreview" action="{!getTemplateContentPreview}" oncomplete="onGetTemplateContentPreviewComplete()" rerender="pMessage">
+    </apex:actionFunction>
+    <apex:actionFunction name="getTemplateContent" action="{!getTemplateContent}" oncomplete="onGetTemplateContentComplete()" rerender="templateText,prefilledCount,notes">
+        <apex:param name="templateId" value=""/>
+        <apex:param name="messageText" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="getRefreshedTemplateLength" action="{!getRefreshedTemplateLength}" oncomplete="refreshTemplateLengthComplete()" rerender="templateText,prefilledCount,notes,selectAll">
+        <apex:param name="messageText" value=""/>
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="getKeylinkKeywords" action="{!getlistSourceOptions}" oncomplete="onGetKeylinkKeywordsComplete()" rerender="keylinkKeywordList,savedSearchesList">
+    </apex:actionFunction>
+    <apex:actionFunction name="getKeylinkCandidates" action="{!getKeylinkCandidates}" rerender="phoneNumbers,omitWarning,pagingOutput" oncomplete="onCandidateListDone()">
+        <apex:param name="keyword" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="getSavedSearchCandidates" action="{!getSavedSearchCandidates}" oncomplete="onCandidateListDone()" rerender="phoneNumbers,omitWarning,pagingOutput">
+        <apex:param name="viewId" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction action="{!getNextCandidates}" id="getNextCandidates" name="getNextCandidates"/>
+    <apex:actionFunction action="{!getNextCandidates}" id="getPrevCandidates" name="getPrevCandidates"/>
+    <apex:actionFunction action="{!onSelectionChange}" id="onSelectionChange" name="onSelectionChange" oncomplete="onSelectionChangeComplete()" rerender="pagingOutput,pMessage,selectAll"/>
+    <apex:actionFunction action="{!selectAllOnChange}" id="selectAllOnChange" name="selectAllOnChange" oncomplete="selectAllOnComplete()" rerender="pagingOutput,phoneNumbers,pMessage"/>
+    
+    <apex:inputHidden id="templateText" value="{!templateText}"/>
+    <apex:inputHidden id="prefilledCount" value="{!prefilledCount}"/>
+    <apex:inputHidden id="groupSMSId" value="{!groupSMSId}"/>
+    <apex:pageBlock title="Message Media Group SMS" id="mainPB" >
+        <apex:pageMessages showDetail="false" escape="true"/>
+        <apex:pageBlockButtons id="pbButtons">
+                <apex:commandButton value="Send" action="{!sendSMS}"/>        
+                <apex:commandButton value="Reset" action="{!resetPage}" />                
+                <apex:commandButton value="Save" action="{!saveSMS}" />
+                <apex:commandButton value="Cancel" action="{!onCancel}"/>
+                <apex:commandButton value="Preview" onclick="return false" id="pButton"/>
+        </apex:pageBlockButtons>
+        <apex:tabPanel switchType="client" >
+            <apex:tab label="Step 1 | Choose Recipients">                  
+                <span style='font-size:10pt;font-weight:bold;color:#777777'>Choose Recipients</span>
+                <hr style='color:#999999;' /><br/>
+                <div>
+                    <apex:outputPanel style="float:left; width:400px" >
+                        <span>List Source</span>
+                        <apex:selectRadio layout="pageDirection" value="{!listSource}" onclick="onKeylinkKeywordsClick(this)" >
+                            <apex:selectOptions value="{!listOptions}"/>
+                        </apex:selectRadio>                                
+                        <br/>
+                        <table>
+                        <tr>                                    
+                            <td style='text-align:right;'>Saved Searches</td>
+                            <td><apex:selectList title="Saved Searches" style="width:160px" id="savedSearchesList" size="1" onchange="onSavedSearchListClick(event)" value="{!selectedSavedSearch}"
+                                            disabled="{!isSearchListDisabled}">
+                                    <apex:selectOptions value="{!savedSearchesOptions}"/>
+                                </apex:selectList></td>
+                        </tr>
+                        <tr>
+                            <td style='text-align:right;'>Keyword</td>
+                            <td><apex:selectList id="keylinkKeywordList" value="{!selectedKeylinkKeyword}" style="width:160px" size="1" onchange="onKeywordListClick(event)"
+                                            disabled="{!isKeyListDisabled}">
+                                    <apex:selectOptions value="{!keylinkKeywordOptions}"/>                                    
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style='text-align:right'>Subject</td>
+                            <td><apex:inputText value="{!txtSubject}" styleClass="{!subjectStyle}" /><br/> <span style='font-style:italic;color:#888888'>(Additional Info, not going to be the part of SMS)</span></td>
+                        </tr>
+                        </table>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel >                                                        
+                        <table>
+                            <tr>
+                                <td style='width:200px;text-align:right'>Select All</td>
+                                <td style='width:200px;text-align:left'><apex:inputCheckbox value="{!selectAll}" id="selectAll" onchange="selectAllOnChange()" /></td>                                
+                            </tr>
+                            <tr><td colspan='2' style='font-style:italic;color:#888888'>(SMS would be sent to the selected entries only)</td></tr>
+                            <tr><td colspan='2'>
+                                    <apex:selectList styleClass="{!pNumClass}" id="phoneNumbers" value="{!selectedCurrentCandidates}" title="Saved Searches" multiselect="true" size="6" style="width:400px" onchange="onSelectionChange()">
+                                        <apex:selectOptions value="{!currentCandidateOptions}"></apex:selectOptions>
+                                    </apex:selectList>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan='2'>
+                                    <apex:outputPanel id="pagingOutput">
+                                        <apex:outputLabel style="text-align:right;;margin-right:10px" id="resultInfo" value="{!resultInfo}"></apex:outputLabel>
+                                        <apex:outputLabel style="background-color:#ffff00" value="{!numSelectedCandidates} candidates selected" rendered="{!isCandidateInfoVisible}"></apex:outputLabel><br/>                                           
+                                        <apex:commandLink style="color:blue;margin-right:10px" value="Previous" id="prevButton" rendered="{!isPreviousVisible}" action="{!getPrevCandidates}" rerender="pagingOutput, phoneNumbers"/>                                        
+                                        <apex:outputLabel style="text-align:right;;margin-right:10px" id="pageInfo" value="{!pageInfo}"></apex:outputLabel>                                        
+                                        <apex:commandLink style="color:blue;margin-right:10px" value="Next" id="nextButton" rendered="{!isNextVisible}" action="{!getNextCandidates}" rerender="pagingOutput,phoneNumbers"/>                                        
+                                    </apex:outputPanel>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan='2' style='font-style:italic;color:#ffa500'>
+                                    <apex:outputPanel id="omitWarning" >
+                                        <apex:outputLabel rendered="{!showOmitWarning}">(Some contacts were ommitted because they have disabled receiving sms)</apex:outputLabel>
+                                        
+                                    </apex:outputPanel>
+                                </td>                                
+                            </tr>                                                     
+                        </table>
+                    </apex:outputPanel>
+                </div>
+            </apex:tab>
+            <apex:tab label="Step 2 | Type Message">                          
+                <span style='font-size:10pt;font-weight:bold;color:#777777'>Message</span>
+                <hr style='color:#999999;' /><br/>
+                <div>
+                    <apex:outputPanel style="float:left; width:400px" >
+                        <table>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td style='text-align:left' class='labelCol  first  last'><apex:outputPanel id="charCountMessage"  >0 of 160 Characters</apex:outputPanel></td>
+                                <td><apex:outputPanel id="loadingMessage" style="text-align:right;padding-left:30px"></apex:outputPanel></td>
+                            </tr>
+                            <tr>
+                                <td style='text-align:right' class='labelCol  first  last'>Message</td>
+                                <td colspan='2'><apex:inputtextarea id="messageText" styleClass="{!messageClass}" value="{!messageText}" rows="10" cols="60" style="max-width:322px;max-height:146px;"/></td>
+                            </tr>
+                            <tr>
+                                <td style='text-align:right' class='labelCol  first  last'>Multipart</td>
+                                <td colspan='2'><apex:inputCheckbox id="multipart" value="{!multipart}" /><br/><span style='font-style:italic;color:#888888'>(This would enable you to send 160+ characters @153 char/SMS)</span></td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <table style="padding-top:23px;padding-left:50px;">                            
+                            <tr>
+                                <td style='text-align:right' class='labelCol  first  last'>SMS Templates</td>
+                                <td>
+                                    <apex:selectList id="templateList" size="5" style="min-width:200px;">
+                                        <apex:selectOptions value="{!templateList}" ></apex:selectOptions>
+                                    </apex:selectList>                                    
+                                </td>
+                            </tr>                            
+                        </table>
+                    </apex:outputPanel>
+                </div>
+            </apex:tab>
+            <apex:tab label="Step 3 | Select Options" id="c">               
+                <table>
+                    <tr>
+                        <td style='width:400px'>
+                            <span style='font-size:10pt;font-weight:bold;color:#777777'>Additional Options</span>
+                            <hr style='color:#999999;' /><br/>
+                            <table>
+                                <tr>
+                                    <td style='text-align:right;width:300px'>Header</td>
+                                    <td style='width:300px'><apex:inputtextarea rows="6" cols="35" id="headerText" value="{!headerText}" /></td>
+                                </tr>
+                                <tr>
+                                    <td style='text-align:right'>Footer</td>
+                                    <td><apex:inputtextarea rows="6" cols="35" id="footerText" value="{!footerText}"/></td>
+                                </tr>                                
+                                <tr>
+                                    <td style='text-align:right'>Save Header/Footer and Timezone as default</td>
+                                    <td><apex:inputCheckbox value="{!saveHF}" /> <br/> <span style='font-style:italic;color:#888888'>(This will overwrite the existing header/footer and timezone)</span></td>
+                                </tr>
+                                <tr>
+                                    <td style='text-align:right'>Notes</td>
+                                    <td><apex:inputtextarea rows="6" cols="35" value="{!txtNotes}" id="notes"/><br/> <span style='font-style:italic;color:#888888'>(Additional Info, not going to be the part of SMS)</span></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style='padding-left:100px;width:400px'>
+                            <span style='font-size:10pt;font-weight:bold;color:#777777'>Scheduling Options</span>
+                            <hr style='color:#999999;' /><br/>
+                            <table>  
+                                <tr>
+                                    <td style='text-align:right'>Schedule</td>
+                                    <td style='width:100px'>
+                                        <apex:outputPanel style="width:100px">
+                                            <apex:outputPanel />
+                                            <apex:inputcheckbox value="{!scheduled}" id="scheduleCheck" />
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style='text-align:right'>Start Date</td>
+                                    <td>                                        
+                                        <apex:outputPanel layout="block" >                            
+                                            <apex:inputtext id="startDate" value="{!startDate}" styleClass="{!startDateClass}"/>
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>                                                             
+                                <tr>
+                                    <td style='text-align:right'>Start Time</td>
+                                    <td>                                        
+                                        <apex:outputPanel layout="block">                            
+                                            <apex:selectList id="startTime" value="{!startTime}" size="1" styleClass="{!startTimeClass}">
+                                                <apex:selectOptions value="{!timeOptions}" >
+                                                </apex:selectOptions>
+                                            </apex:selectList> 
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style='width:300px;text-align:right'>Track Message Delivery</td>
+                                    <td><apex:inputCheckbox value="{!deliveryTrack}" styleClass="{!trackClass}"/> <br/> <span style='font-style:italic;color:#888888'>(Additional charge per message applies)</span></td>
+                                </tr>
+                                <tr>
+                                    <td style='width:300px;text-align:right'>Daylight Saving</td>
+                                    <td><apex:inputCheckbox value="{!daylightSaving}" styleClass="{!trackClass}"/></td>
+                                </tr>
+                                <tr>
+                                    <td style='text-align:right'>Time Zone</td>
+                                    <td style='width:100px'>
+                                        <apex:outputPanel style="width:100px">
+                                            <apex:outputPanel />
+                                            <apex:selectList id="timeZone" value="{!selectedTimeZone}" styleClass="{!tzClass}" multiselect="false" size="1">
+                                                <apex:selectOptions value="{!timeZone}"/>            
+                                            </apex:selectList>
+                                        </apex:outputPanel>
+                                    </td>
+                                </tr>                                
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </apex:tab>
+            <apex:tab label="Preview" switchType="client" ontabenter="showPreview()" id="tabPreview">
+            <apex:pageBlockSection collapsible="false" id="PreviewSection">
+                <apex:pageBlockSectionItem id="RecSItem">
+                <apex:outputLabel value="Recipient" ></apex:outputLabel>    
+                    <apex:outputPanel layout="block" id="RecPanel">
+                        <apex:outputPanel layout="block"/>
+                        <apex:inputTextarea id="rec" rows="5" cols="60" value="{!headerText}" readonly="true" />
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                <br/>
+                <apex:pageBlockSectionItem id="PMessageSItem">
+                <apex:outputLabel value="Message" ></apex:outputLabel>    
+                    <apex:outputPanel layout="block" id="PMessagePanel">
+                        <apex:outputPanel layout="block"/>
+                        <apex:inputTextarea id="pMessage" rows="5" cols="60" value="{!firstEntryMergedText}" readonly="true"/>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:tab>
+         </apex:tabPanel>
+    </apex:pageBlock>
+    </apex:form>      
+</apex:page>

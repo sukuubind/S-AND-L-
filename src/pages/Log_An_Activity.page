@@ -1,0 +1,4 @@
+<apex:page controller="Log_An_Activity_Controller" title="{!pageTitle}" standardStylesheets="true" applyHtmlTag="false" Sidebar="false" showheader="false" tabStyle="Task" contentType="text/html">
+	<apex:includeScript value="/support/console/32.0/integration.js"/>
+	<apex:outputText escape="false" value="{!htmlContent}"/>
+</apex:page>

@@ -1,0 +1,15 @@
+<apex:page setup="true" controller="SessionController" showHeader="false">
+<apex:form >
+ <apex:outputpanel id="counter">
+ <apex:outputText value="Click Here To Generate Session Id and Server URL" /> 
+ <apex:actionSupport event="onclick" action="{!doLogin}" rerender="refreshId" status="counterStatus">
+ <apex:param name="sessionId" assignTo="{!apiSessionId}" value="{!$Api.Session_ID}" />
+ <apex:param name="serverURL" assignTo="{!apiServerURL}" value="{!$Api.Partner_Server_URL_140}" /> 
+ </apex:actionSupport> 
+ </apex:outputpanel><br></br> 
+ <apex:outputPanel id="refreshId">
+ <apex:outputText value="API Session Id: {!apiSessionId}"/><br></br>
+ <apex:outputText value="API Server URL: {!apiServerURL}"/><br></br>
+ </apex:outputPanel>
+</apex:form> 
+</apex:page>

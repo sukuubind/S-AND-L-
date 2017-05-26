@@ -1,0 +1,10 @@
+<apex:component >
+	<apex:attribute name="notice"  
+					description="Notice" 
+					type="string" 
+					required="true" />
+	
+	<apex:outputText style="background-color:red;color:white;font-size : large;font-weight:bold;" value="Notice" />
+	&nbsp;&nbsp;&nbsp;	        		
+	<apex:outputText style="color:black;font-size : normal;" value="{!notice}" />
+</apex:component>

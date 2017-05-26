@@ -1,0 +1,14 @@
+<apex:page contentType="application/octet-stream#webappt.ics" showHeader="false" sidebar="false" standardStylesheets="false" controller="icscontroller">
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+UID:<apex:outputText value="{!dtstart}"/><apex:outputText value="{!pmemail}"/>
+DTSTAMP:<apex:outputText value="{!dtstart}"/>
+ORGANIZER:<apex:outputText value="{!nospacename}"/>:MAILTO:<apex:outputText value="{!pmemail}"/>
+DTSTART:<apex:outputText value="{!dtstart}"/>
+DTEND:<apex:outputText value="{!dtend}"/>
+SUMMARY:Web Appointment Scheduled with <apex:outputText value=" {!pmname}"/>
+END:VEVENT
+END:VCALENDAR
+</apex:page>

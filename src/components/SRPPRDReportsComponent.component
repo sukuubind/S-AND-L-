@@ -1,0 +1,100 @@
+<apex:component controller="SRPPRDReportsCompController" access="global">
+<apex:attribute name="emailId" assignTo="{!emailAddress}" type="String" description="Email Address To Send Report"/>
+Please do not reply to this email.
+<apex:dataTable value="{!oppList}" var="opp" rowClasses="odd,even" styleClass="tableClass">
+        <apex:column >
+                <apex:facet name="header">Degree Type</apex:facet>
+                <apex:outputText value="{!opp.Program_Degree_Type__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Academic_Program__r.DeltakSRP__Degree_Type__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Program Name</apex:facet>
+                <apex:outputText value="{!opp.Program__r.Program_Title__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Academic_Program__r.DeltakSRP__Program_Title__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Specialization Name</apex:facet>
+                <apex:outputText value="{!opp.Specialization__r.Spec_Title__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Academic_Specialization__r.DeltakSRP__Specialization_Title__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student First Name</apex:facet>
+                <apex:outputText value="{!opp.Student__r.FirstName}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.FirstName}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Last Name</apex:facet>
+                <apex:outputText value="{!opp.Student__r.LastName}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.LastName}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Email</apex:facet>
+                <apex:outputText value="{!opp.Student__r.Email}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.Email}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Phone 1</apex:facet>
+                <apex:outputText value="{!opp.Student__r.HomePhone}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.HomePhone}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Phone 2</apex:facet>
+                <apex:outputText value="{!opp.Student__r.Work_Phone__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.Work_Phone__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Phone 3</apex:facet>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.MobilePhone}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student Country</apex:facet>
+                <apex:outputText value="{!opp.Mailing_Country__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.MailingCountry}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Student State</apex:facet>
+                <apex:outputText value="{!opp.Mailing_State__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.MailingState}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Postal Code</apex:facet>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.MailingPostalCode}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">How did you hear about us?</apex:facet>
+                <apex:outputText value="{!opp.How_Heard_Detail__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP_How_Heard_Detail__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Messaging Service</apex:facet>
+                <apex:outputText value="{!opp.IM_Type__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.DeltakSRP__IM_Type__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Messaging Name</apex:facet>
+                <apex:outputText value="{!opp.IM_Username__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.DeltakSRP__IM_Username__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+        <apex:column >
+                <apex:facet name="header">Ok to Text?</apex:facet>
+                <apex:outputText value="{!opp.OK_to_Text__c}" rendered="{!(!isAccSRP)}"/>
+                <apex:outputText value="{!opp.DeltakSRP__Student__r.DeltakSRPSMS__Ok_To_Text__c}" rendered="{!(isAccSRP)}"/>
+        </apex:column>
+        
+    </apex:dataTable>
+</apex:component>

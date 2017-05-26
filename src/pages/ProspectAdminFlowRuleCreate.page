@@ -1,0 +1,138 @@
+<apex:page standardcontroller="Account" extensions="ProspectAdminFlowController" showheader="false" sidebar="false">
+<c:ProspectHeader />
+<script>
+	function confirmCancel()
+	{
+		var isCancel = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to cancel?");
+		if (isCancel) 
+		{
+			window.top.close();
+			return true;
+		}
+		else 
+		{
+			return false; 
+		}
+		return false;
+	}
+	function confirmStartOver()
+	{
+		var isStart = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to start over?");
+		if (isStart) 
+		{
+			return true;
+		}
+		else
+		{
+			return false; 
+		}
+		return false;
+	
+	}
+</script>
+
+<apex:form >
+
+<apex:actionFunction name="loadAssociatedFieldSets" action="{!loadAssociatedFieldSets}" rerender="fields"/>
+<apex:actionFunction name="removeRuleSet" action="{!removeRuleSet}" rerender="ruleSetDet,ruleFormula">
+<apex:param name="ruleSetId" value="" assignTo="{!RSRem}"/>
+</apex:actionFunction>
+<br/><br/><br/>
+	<apex:pageBlock >
+		<c:ProspectPageHeader styleClass="pageHeader" stepValue="Step 3 of 4" required="true" acctName="{!acctName}" VFPageName="RuleCreate"/> <br/> <br/>
+        <apex:pageMessages rendered="{!isError}"/>
+        <div align="center">
+        	<apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+        						onclick="return confirmStartOver()" immediate="true"/>
+          	<apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&emptyRule)}"/>
+			<apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!createTeam}"/>
+			<apex:commandButton action="{!step3}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&!emptyRule)}"/>
+			<apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!(cloneTeam)}"/>
+			<apex:commandButton action="{!step4}" value="Next" styleClass="buttons"/>
+	        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+		</div><br/>
+		
+		 <div>
+				<apex:outputText value=" {!teamName}" styleClass="prospectText" style="font-size:16px; font-weight:bold"/>
+		</div><br/>
+		
+		<apex:outputPanel id="createRule" rendered="{!createRule}" >
+		 <apex:outputText value="Create Rule" styleClass="pageblockTable"/>
+		 <apex:panelGrid columns="6">
+		 	<apex:panelGrid >
+		 		<apex:facet name="header">Sequence #</apex:facet>
+		 		<apex:inputText styleClass="form-control" value="{!sequenceNo.fieldvalue}" style="width:20px;"/>
+		 	</apex:panelGrid>
+		 	<apex:panelGrid >
+		 		<apex:facet name="header">Object</apex:facet>
+		 		<apex:selectlist styleClass="form-control" value="{!objType.fieldvalue}" size="1" style="width:170px;" onChange="loadAssociatedFieldSets();">
+            		<apex:selectOptions value="{!objectTypes}"/>
+        		</apex:selectlist>
+		 	</apex:panelGrid>
+		 	<apex:panelGrid id="fields">
+		 		<apex:facet name="header">Field Name</apex:facet>
+		 		<apex:selectlist styleClass="form-control" value="{!fieldName.fieldvalue}" size="1" style="width:170px;">
+            		<apex:selectOptions value="{!assocFieldSets}"/>
+        		</apex:selectlist>
+		 	</apex:panelGrid>
+		 	<apex:panelGrid >
+		 		<apex:facet name="header">Operator</apex:facet>
+		 		<apex:selectlist styleClass="form-control" value="{!operator.fieldvalue}" size="1" style="width:170px;">
+            		<apex:selectOptions value="{!operatorList}"/>
+        		</apex:selectlist>
+		 	</apex:panelGrid>
+		 	<apex:panelGrid >
+		 		<apex:facet name="header">Value</apex:facet>
+		 		<apex:inputText styleClass="form-control" value="{!value.fieldvalue}" maxlength="100"/>
+		 	</apex:panelGrid>
+		 	<apex:panelGrid >
+		 		<apex:facet name="header">Add Rule Set</apex:facet>
+		 		<apex:commandButton action="{!addRuleSet}" value=" + "/>
+		 	</apex:panelGrid>
+		 </apex:panelGrid>
+      </apex:outputPanel>
+		<apex:outputPanel id="ruleSetDet">
+             <apex:outputText value="Added Rule Sets" styleClass="pageblockTable"/><br/><br/>
+            <apex:repeat id="repeatSection" value="{!addedRuleSets}" var="dis">
+         	<apex:outputText value="{!dis.ruleSetDetail}" escape="false" styleClass="prospectText"/>&nbsp;&nbsp;
+         	<apex:outputPanel id="removeRuleSet" onclick="removeRuleSet('{!dis.rsId}');" styleClass="buttons">Remove</apex:outputPanel><br/><br/>
+	 	 	</apex:repeat><p/>
+		</apex:outputPanel>
+		<br/>
+		<apex:outputPanel id="ruleFormula">
+            <apex:outputText value="Enter Rule Formula" styleClass="pageblockTable"/><br/><br/>
+            <apex:inputText styleClass="form-control" value="{!formula.fieldvalue}" style="width:200px;" maxlength="1000"/>
+		</apex:outputPanel>
+        <br/>
+        <apex:outputText value=" e.g (AND,1,2,3)" /> <br/>
+        <apex:outputText value=" e.g (OR,1,2)" /><br/>
+        <apex:outputText value=" e.g (AND,1,(OR,2,3))" /><br/>
+        
+			
+		<div align="center">
+			<apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+        						onclick="return confirmStartOver()" immediate="true"/>
+          	<apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&emptyRule)}"/>
+			<apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!createTeam}"/>
+			<apex:commandButton action="{!step3}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&!emptyRule)}"/>
+			<apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!(cloneTeam)}"/>
+			<apex:commandButton action="{!step4}" value="Next" styleClass="buttons"/>
+	        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                              onclick="return confirmCancel()" immediate="true"/>
+		</div>
+         <br/>
+        <apex:outputPanel >
+            <apex:outputText value="All Active Rules" styleClass="pageblockTable" />
+            <br/>
+            <br/>
+            <apex:repeat value="{!ruleSets}" var="dis">
+         	
+         	<apex:outputText value="{!dis}" escape="false" styleClass="prospectText"/>
+         	<br/>
+	 	 </apex:repeat>
+
+		</apex:outputPanel>
+	</apex:pageBlock>
+</apex:form>
+</apex:page>

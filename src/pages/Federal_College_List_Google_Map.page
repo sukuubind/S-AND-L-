@@ -1,0 +1,90 @@
+<apex:page standardController="Federal_College_Lists__c">
+
+<head>
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+<script type="text/javascript"> 
+
+$(document).ready(function() {
+  
+  var myOptions = {
+    zoom: 10,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeControl: true
+  }
+  
+  var map;
+  var marker;
+  
+  var geocoder = new google.maps.Geocoder();
+  var address = "{!Federal_College_Lists__c.Address__c}, " + "{Federal_College_Lists__c.!City__c}, " + "{!Federal_College_Lists__c.State_Code__c}, " + "{!Federal_College_Lists__c.Zip_Code__c}, " + " {!Federal_College_Lists__c.Country__c}";
+  
+  var infowindow = new google.maps.InfoWindow({
+    content: "<b>{!Federal_College_Lists__c.Name}</b><br>{!Federal_College_Lists__c.Address__c}<br>{!Federal_College_Lists__c.City__c}, {!Federal_College_Lists__c.Zip_Code__c}<br>{!Federal_College_Lists__c.Country__c}"
+  });
+
+  geocoder.geocode( { address: address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK && results.length) {
+      if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+      
+        //create map
+        map = new google.maps.Map(document.getElementById("map"), myOptions);
+      
+        //center map
+        map.setCenter(results[0].geometry.location);
+        
+        //create marker
+        marker = new google.maps.Marker({
+            position: results[0].geometry.location,
+            map: map,
+            title: "{!Federal_College_Lists__c.Name}"
+        });
+        
+        //add listeners
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+        });
+        google.maps.event.addListener(infowindow, 'closeclick', function() {
+          map.setCenter(marker.getPosition()); 
+        });
+        
+      }
+      
+    } else {
+      $('#map').css({'height' : '15px'});
+      $('#map').html("Oops! {!Federal_College_Lists__c.Name}'s address could not be found, please make sure the address is correct.");
+      resizeIframe();
+    }
+  });
+  
+  function resizeIframe() {
+    var me = window.name;
+    if (me) {
+      var iframes = parent.document.getElementsByName(me);
+      if (iframes && iframes.length == 1) {
+        height = document.body.offsetHeight;
+        iframes[0].style.height = height + "px";
+      }
+    }
+  }
+  
+});
+</script>
+
+<style>
+#map {
+  font-family: Arial;
+  font-size:12px;
+  line-height:normal !important;
+  height:250px;
+  background:transparent;
+}
+</style>
+
+</head>
+ 
+<body>
+<div id="map"></div> 
+</body> 
+</apex:page>

@@ -1,0 +1,55 @@
+<apex:page controller="UticaReportOpportunityPagination">
+
+<apex:form >
+<apex:outputPanel id="uticainquiry">
+<apex:pageBlock >
+<apex:pageBlockTable value="{!OpportunityInqPagination}" var="o">
+<apex:column headerValue="SRP Student">
+<apex:outputfield value="{!o.DeltakSRP__Student__c}"/>
+</apex:column>
+<apex:column headerValue="Program Abbreviation">
+<apex:outputfield value="{!o.SRP_Program_Abbreviation__c}"/>
+</apex:column>
+<apex:column headerValue="Created Date">
+<apex:outputfield value="{!o.CreatedDate}"/>
+</apex:column>
+<apex:column headerValue="Source">
+<apex:outputfield value="{!o.DeltakSRP__Source__c}"/>
+</apex:column>
+</apex:pageBlockTable>
+</apex:pageBlock>
+
+<!--
+<table cellpadding="3" cellspacing="0" border="0" width="100%">
+                        <thead>
+                        
+                            <th style="width:25%; border-bottom:1px dashed black; border-right:1px dashed black;">SRM Student</th>
+                            <th style="width:40%; border-bottom:1px dashed black; border-right:1px dashed black;">Program Abbreviation*</th>
+                            <th style="width:5%; border-bottom:1px dashed black; border-right:1px dashed black;">Created Date</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Source*</th>
+                        
+                        </thead>
+                       
+                         <apex:repeat value="{!OpportunityInqPagination}" var="o">
+                         <tr>
+                         <td> <apex:outputfield value="{!o.Student__c}"/> </td>
+                         <td> <apex:outputfield value="{!o.Program_Abbrev__c}"/> </td>
+                         <td> <apex:outputfield value="{!o.CreatedDate}"/> </td>
+                         <td> <apex:outputfield value="{!o.Source__c}"/> </td>
+                         </tr>
+                         </apex:repeat>
+                         </table>
+                  
+    -->
+      <apex:panelGrid columns="2">
+      <apex:commandLink action="{!previousInq}" rerender="uticainquiry">
+          Previous
+      </apex:commandlink>
+      <apex:commandLink action="{!nextInq}" rerender="uticainquiry">
+          Next
+      </apex:commandlink>
+      </apex:panelgrid>
+     </apex:outputPanel>
+      </apex:form>
+      
+</apex:page>

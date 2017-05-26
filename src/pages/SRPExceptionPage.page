@@ -1,0 +1,72 @@
+<apex:page docType="html-5.0" showHeader="false" title="Application Exception" standardstylesheets="false" controller="SRPPageTemplateController">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Application Error</title> 
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <apex:stylesheet value="{!URLFOR($Resource.DeltakSRP__Statics, '/css/bootstrap.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.DeltakSRP__Statics, '/css/main.css')}"/>
+        <apex:outputPanel layout="none" rendered="{!NOT(ISNULL(styleOverride)) && $Site.Prefix == ''}">
+            <!-- <apex:styleSheet value="{!URLFOR($Resource[styleOverride])}"/> -->
+            <apex:styleSheet value="{!styleOverride}"/>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!NOT(ISNULL(styleOverride)) && $Site.Prefix != ''}">
+            <!-- <apex:styleSheet value="{!URLFOR($Resource[styleOverride])}"/> -->
+            <apex:styleSheet value="{!$Site.Prefix}{!styleOverride}"/>
+        </apex:outputPanel>
+    </head>  
+        
+    <div class="container">
+				<div class="row-fluid">
+        		<div class="span12">             
+            <div class="header hidden-phone">
+            	<h1><apex:outputText value="{!accountname}" escape="true"/></h1>
+            		<ul id="accountLinks">
+	            		<li><a href="/secur/logout.jsp?retUrl=/{!$Site.Prefix}{!URLENCODE('?acctid='+AccountId)}">Logout</a></li>
+	            		<li><a href="/apex/deltaksrp__srpprofilepage">My Profile</a></li>
+	            	</ul>
+            </div>
+            
+            <div class="header_phone visible-phone">
+            	<!--  <apex:outputPanel layout="none" rendered="{!NOT(ISPICKVAL($User.UserType,'Guest'))}">
+            		<ul id="accountLinks">
+	            		<li><a href="/secur/logout.jsp?retUrl=/{!$Site.Prefix}{!URLENCODE('?acctid='+AccountID)}">Logout</a></li>
+	            		<li><apex:commandLink action="{!goToProfile}" value="My Profile"/></li>
+	            	</ul>
+            	</apex:outputPanel> -->
+            </div>
+            
+            <div class="row-fluid visible-phone">
+                <div class="span12">
+                    <div id="phoneAccountLinks" class="navbar hidden-desktop">
+                    	<h1 class="phone"><apex:outputText value="Loyola University - New Orleans" escape="true"/></h1>
+                    </div>
+                </div>
+                
+                
+   		</div>
+      </div>
+      </div>
+            <div class="row-fluid">
+                <div class="span10 offset1">
+                    <apex:outputPanel layout="block" styleClass="existing_applicants">
+                        {!$Label.DeltakSRP__Error}:&nbsp;<apex:outputText value="{!$Site.ErrorMessage}"/>
+                        <br/>
+                         <apex:outputPanel layout="none" rendered="{!$Site.Prefix != ''}">
+                            <a href="{!$Site.Prefix}/DeltakSRP__srpapplicationpage?{!URLENCODE('acctid='+AccountId)}">Reload Application</a>
+                         </apex:outputPanel>
+                         <apex:outputPanel layout="none" rendered="{!$Site.Prefix == ''}">
+                            <a href="/DeltakSRP__srpapplicationpage?{!URLENCODE('acctid='+AccountId)}">Reload Application</a>
+                         </apex:outputPanel>
+                    </apex:outputPanel>
+                </div>
+            </div>
+            <div class="row-fluid"> 
+                <div class="span12">
+                    <div class="footer">
+                        Application Exception
+                    </div>
+                </div>
+            </div>
+    </div>
+</apex:page>

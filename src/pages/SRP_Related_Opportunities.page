@@ -1,0 +1,31 @@
+<apex:page sidebar="false" showHeader="false" StandardController="Opportunity" extensions="SRPRelatedOpportunitiesController">
+
+<apex:pageBlock rendered="{!renderRelOpps}">
+      	
+      	
+      	<apex:pageBlockTable value="{!relatedOpps}" var="relOpp" id="opptblData" rendered="{!renderRelOpps}">
+      		
+      		<apex:column >
+				<apex:facet name="header">
+					<apex:outputText value="{!$ObjectType.Opportunity.Label}" />
+				</apex:facet>
+				<apex:outputText value="{! '{0}'}" escape="false">
+                    <apex:param value='<a href="/{!relOpp.Id}" target="_blank">{!relOpp.Name}</a>'/>
+                </apex:outputText>
+	            </apex:column>
+      		
+      		<apex:repeat value="{!RelatedOpportunityFields}" var="of" id="relOppFields">
+				<apex:column >
+				<apex:facet name="header">
+					<apex:outputText value="{!of.Label}" />
+				</apex:facet>
+   				<apex:outputField Label="{!of.Label}" value="{!relOpp[of.fieldPath]}" />
+	            </apex:column>
+   			</apex:repeat>
+      
+      	</apex:pageBlockTable>
+      	
+      	
+</apex:pageBlock>
+
+</apex:page>

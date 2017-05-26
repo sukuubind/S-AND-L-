@@ -1,0 +1,6 @@
+<apex:page StandardController="Task">
+ 
+    <apex:outputField value="{!Task.Description}" rendered="{!IF(CONTAINS(LOWER(Task.Description),'html'),false, true)}"/>
+    <!--   <apex:outputText value="{!Task.Description}" escape="false" /> -->
+    <apex:outputText value="{!Task.Description}" escape="false" rendered="{!IF(CONTAINS(LOWER(Task.Description),'html'),true, false)}"/>
+</apex:page>

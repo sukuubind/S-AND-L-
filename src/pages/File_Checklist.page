@@ -1,0 +1,96 @@
+<apex:page showheader="false" sidebar="false" standardController="Opportunity" renderAs="pdf" extensions="FileCheckListController">
+ 
+    <apex:pageBlock title="Admissions File Checklist | {!Opportunity.Account.Name}">
+    
+        <apex:pageBlockSection columns="1" >
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Name" for="Name"/>
+                <apex:outputText value="{!Opportunity.Student__r.firstname} {!Opportunity.Student__r.lastname}" id="Name"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Start Date" for="Start"/>
+                <apex:outputField value="{!Opportunity.Start_Date__c}" id="Start"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Program" for="Program"/>
+                <apex:outputText value="{!Opportunity.Program__r.Name}" id="Program"/>
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Specialization" for="Specialization"/>
+                <apex:outputText value="{!Opportunity.Specialization__r.Name}" id="Specialization"/>
+            </apex:pageBlockSectionItem>
+        
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="File Started On" for="Booked"/>
+                <apex:outputField value="{!Opportunity.Date_Booked__c}" id="Booked"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Date File Submitted" for="Submitted"/>
+                <apex:outputField value="{!Opportunity.Date_Submitted__c}" id="Submitted"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="GPA" for="GPA"/>
+                <apex:outputField value="{!Opportunity.GPA__c}" id="GPA"/>
+            </apex:pageBlockSectionItem>
+            
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+        <br/><br/>
+    <apex:pageBlock >
+    
+
+    
+        <apex:pageBlockTable value="{!docs}" var="item">
+
+            <apex:column >
+                <apex:facet name="header"> Status </apex:facet>
+                <apex:image rendered="{!item.Status_Boolean__c == 'FALSE'}"
+                            value="{!$Resource.Red_X}"
+                            width="30"
+                            height="30"/>
+                <apex:image rendered="{!item.Status_Boolean__c != 'FALSE'}"
+                            value="{!$Resource.Checkbox}"
+                            width="30"
+                            height="30"/>
+            </apex:column>
+
+            <apex:column > 
+                <apex:facet name="header"> Type </apex:facet>
+                <apex:outputText value="{!item.RecordType.Name}"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header"> Detail </apex:facet>
+                <apex:outputText value="{!item.Detail__c}"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header"> Date Received </apex:facet>
+                <apex:outputField value="{!item.Date_Received__c}"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header"> Comments </apex:facet>
+                <apex:outputText value="{!item.Comments__c}"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header"> Degree Conferral</apex:facet>
+                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                    <apex:param value="{!item.Degree_Conferral_Date__c}"/>
+                </apex:outputText>
+            </apex:column>
+
+        </apex:pageBlockTable>
+        
+
+
+    </apex:pageBlock>
+    
+</apex:page>

@@ -1,0 +1,25 @@
+<apex:page controller="GroupSMSListController">
+<apex:form >
+  <apex:pageBlock title="Group SMS List" >
+        <apex:pageBlockButtons >
+            <apex:commandButton value="New Group SMS" action="{!newGroupSMS}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockTable value="{!groupSMSList}" var="m" >
+            <apex:column HeaderValue="Action">                                              
+                <apex:outputLink value="/apex/batchsms?id={!m.Id}&src=groupsms">View</apex:outputLink> |&nbsp;
+                <apex:outputLink value="/apex/batchsmsdel?id={!m.Id}">Del</apex:outputLink>
+            </apex:column>
+            <apex:column value="{!m.Subject__c}"/>
+            <apex:column value="{!m.Message__c}"/>
+            <apex:column value="{!m.StartDate__c}"/>
+            <apex:column value="{!m.StartTime__c}"/>
+            <apex:column value="{!m.isScheduled__c}"/>
+            <apex:column value="{!m.IsTrackDelivery__c}"/>
+        </apex:pageBlockTable>
+        <apex:panelGrid columns="2">
+          <apex:commandButton action="{!previous}" value="Previous" />
+          <apex:commandButton action="{!next}" value="Next" />
+        </apex:panelGrid>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

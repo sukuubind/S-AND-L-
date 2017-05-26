@@ -1,0 +1,22 @@
+<apex:page contentType="text/plain" showHeader="false" sidebar="false" standardStylesheets="false" controller="emailtemplatecontroller">
+<html>
+<body style="font-family:Corbel,Arial,Helvetica,sans-serif;font-size:14px;color:#575757;">
+<table cellpadding="0" width="600" cellspacing="0" border="0">
+<tr><td colspan="3">
+<img style="display: block;" src="http://na26.salesforce.com/servlet/servlet.ImageServer?id=01560000000oKEN&oid=00D60000000JELK" alt="Saint Josephs University"/>
+</td></tr>
+<tr><td width="62" height="228" style="background-color:#eee8d5">
+ 
+</td>
+<td height="228" width="473">
+<h2 style="font-size:14px;text-align:center;color:#000000 !important;">
+ Thank you! Your appointment with <b><apex:outputtext value="{!firstpmname}"/></b><br/> has been scheduled for:</h2>
+<center><h1 style="color:#a00e00;font-size:24px;text-align:center;"> <apex:outputtext value="{!dt}"/> EDT</h1></center>
+<br/><br/><h3 style="color:#000000 !important;font-size:14px;text-align:center;">To change or cancel your appointment time click below.</h3>
+<center><a style="text-align:center;color:#575757 !important;" href="http://www.scheduletime2talk.com?pmid={!opp}" >
+Change Appointment</a></center></td><td width="65" height="228" style="background-color:#eee8d5">
+ </td>
+</tr><tr><td colspan="3"><img style="display: block;" src="http://na26.salesforce.com/servlet/servlet.ImageServer?id=01560000000oKE3&oid=00D60000000JELK" />
+</td></tr>
+</table></body></html>            
+</apex:page>

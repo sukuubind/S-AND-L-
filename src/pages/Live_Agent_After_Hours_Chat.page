@@ -1,0 +1,27 @@
+<apex:page showHeader="{!showHeader}" contentType="{!contentType}" controller="Live_Agent_After_Hours_Chat_Controller" action="{!checkUserInAfterHoursWindow}">
+
+<apex:form rendered="{!NOT(switchProfile)}">
+	<apex:outputPanel id="apexMessages">
+		<apex:pageMessages rendered="{!OR(foundErrors,showMessages)}"/>
+	</apex:outputPanel>
+
+<apex:outputPanel id="isAfterHoursEnabled" rendered="{!AND(isAfterHoursUser,inAfterHoursWindow,NOT(foundErrors))}">
+		<br/>
+		<script>
+		function delayedReload() {
+			setTimeout(reloadWindow,2000);
+		}
+		
+		function reloadWindow() {
+			window.location.reload();
+		}
+		</script>
+		<apex:inputField value="{!currUser.Is_After_Hours_Enabled__c}">Enable After Hours Mode</apex:inputField>
+		<br/><br/>
+		<apex:commandButton action="{!callUpdateAfterHoursMode}" value="Update" rerender="apexMessages" oncomplete="if('{!successFlag}' == 'true'){delayedReload();}"/>
+</apex:outputPanel>
+</apex:form>
+
+<apex:outputText value="{!profileUpdateMessage}" rendered="{!switchProfile}"/>
+
+</apex:page>

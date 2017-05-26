@@ -1,0 +1,49 @@
+<apex:component access="global" allowDML="true" controller="ProspectSummaryController"> 
+	<apex:attribute name="tmId" assignTo="{!teamId}" description="Team ID" type="string" required="false" /> 
+	<apex:attribute name="acctId" assignTo="{!accountId}" description="Account ID" type="string" required="false" /> 
+	<apex:attribute name="tmName" assignTo="{!teamName}" description="Team Name" type="string" required="false" /> 
+	<apex:attribute name="ruleSm"  description="Team Rule Summary" type="List" required="false" /> 
+	<apex:attribute name="memberName"  description="Member Alloc Summary" type="map" required="false" /> 
+	<apex:attribute name="memberAllocation"  description="Member Alloc Summary" type="map" required="false" /> 
+	<apex:attribute name="memberStatus"  description="Member Alloc Summary" type="map" required="false" /> 
+	
+	<apex:attribute name="tmExempt" assignTo="{!teamExempt}" description="Exemption Flag" type="boolean" required="false" /> 
+	<apex:attribute name="tmOrder" assignTo="{!teamOrder}" description="Team Order" type="string" required="false" /> 
+	
+	
+	 <style>
+        tr.headerRow .TableTitle {
+            color: #818285 !important;  
+            font-size: 14px !important;
+        }
+    </style>
+	<apex:pageBlock >   
+	<div>
+		<h1><b>	<apex:outputText value=" {!teamOrder}" styleClass="prospectText" style="font-size:16px; font-weight:bold" rendered="{!(teamOrder!=null)}"/>	</b></h1> 
+		<h1><b>	<apex:outputText value=" - " styleClass="prospectText" style="font-size:16px; font-weight:bold" rendered="{!(teamOrder!=null)}"/>	</b></h1> 
+		<h1><b>	<apex:outputText value=" {!teamName}" styleClass="prospectText" style="font-size:16px; font-weight:bold"/>	</b></h1><br/> 
+		<h1><b> <apex:outputText value="Escalation Exempt :" styleClass="prospectText" style="font-size:14px"/> </b></h1>
+		<h1><b> <apex:outputText value="{!IF(teamExempt, 'Yes', 'No')}" styleClass="prospectText" style="font-size:14px"/> </b></h1>
+ 		
+		
+	</div><br/>
+		<apex:outputPanel id="ruleDet"> 
+         <apex:outputText value="Rule and Member Details" styleClass="pageblockTable"/><br/><br/> 
+          
+         <apex:repeat value="{!ruleSm}" var="dis">
+         	
+         	<apex:outputText value="{!dis}" escape="false" styleClass="prospectText"/>
+         	<br/>
+	 	 </apex:repeat> 
+	 	 
+ 		</apex:outputPanel>
+        <apex:outputPanel id="fields">   
+        	<apex:pageBlockTable value="{!memberName}" var="r">             
+                        <apex:column headerValue="Member Name" width="80px" value="{!memberName[r]}" headerClass="TableTitle"></apex:column>
+                        <apex:column headerValue="Member Allocation" width="50px" value="{!memberAllocation[r]}" headerClass="TableTitle"></apex:column>
+                        <apex:column headerValue="Member Status" width="20px" value="{!memberStatus[r]}" headerClass="TableTitle"></apex:column>
+        	</apex:pageBlockTable>
+		</apex:outputPanel>
+		
+	</apex:pageBlock>
+</apex:component>

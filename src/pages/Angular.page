@@ -1,0 +1,65 @@
+<apex:page standardStylesheets="false" sidebar="false"
+       showHeader="false" applyBodyTag="false" applyHtmlTag="false"
+       docType="html-5.0" controller="Angular">
+    <html lang="en" ng-app="demoApp">
+    <head>
+       <meta charset="utf-8"/>
+       <meta name="viewport" content="width=device-width, initial-scale=1"/>
+       <title>Angular Demo</title>
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+
+       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
+       <script>
+         // define the app
+         var demoApp = angular.module('demoApp', []);
+         // add the controller
+         demoApp.controller('DemoCtrl', function ($scope) {
+             $scope.account = {!account}
+             $scope.contacts = {!contacts}
+         });
+
+         demoApp.controller('DemoCtrl1', function ($scope) {
+             $scope.account = {!account}
+             $scope.contacts = {!contactList}
+             $scope.sortBy = 'Name';
+             //$scope.sortColumn = 'Name';
+             //$scope.sortReverse = 'false';
+
+             $scope.orderByMe = function(contact) {
+             $scope.myOrderBy = contact;
+  }
+         });
+       </script>
+    </head>
+    <body>
+
+
+       <div class="container" ng-controller="DemoCtrl1">
+       <h1 style="color:Green">First 100 Contacts</h1>
+       <p class="lead" style="color:Gray">
+       Please search with names for quick search!
+       </p>
+        <b>Search</b>&nbsp;&nbsp;&nbsp;<input ng-model="query" /><br/><br/>
+
+
+       <table class="table table-bordered">
+         <tr>
+           <th ng-click="orderByMe('Name')">Name</th>
+           <th ng-click="orderByMe('Email')">Email</th>
+           <th>Id</th>
+         </tr>
+         <tr ng-repeat="contact in contacts | filter:query | orderBy:myOrderBy">
+           <td>{{contact.Name}}</td>
+           <td>{{contact.Email}}</td>
+           <td>{{contact.Id}}</td>
+         </tr>
+       </table>
+       </div>
+
+
+
+
+
+    </body>
+    </html>
+    </apex:page>

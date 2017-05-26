@@ -1,0 +1,89 @@
+<apex:page showHeader="false" controller="Post_Chat_Form_Controller" id="LiveAgent_PostChatForm">
+<apex:stylesheet value="{!$Resource.Saint_Josephs_University_Chat_CSS}"/>
+
+<script type="text/javascript">
+window.resizeTo(620,560);
+</script> 
+
+<apex:insert name="body">
+
+<div class="headerSection">
+<apex:image id="headerLogo" styleClass="headerLogo" value="{!$Resource.Saint_Josephs_University_Chat_Header_Logo}" />
+<apex:image id="headerChatBubbles" styleClass="headerChatBubbles" value="{!$Resource.Saint_Josephs_University_Chat_Header_ChatBubbles}" />
+</div>
+   
+
+<div class="postchatForm">
+<apex:form id="postchatForm">
+
+<apex:outputPanel id="feedbackPanelParent" > 
+<table width="100%">
+<tr>
+<td class="tdFormSection">
+<div>
+ <apex:outputPanel id="messages" rendered="{!renderMessages}">
+    <div class="messagesSection">{!messages}</div>
+ </apex:outputPanel>
+</div>
+
+<div> 
+ <apex:outputPanel id="feedbackPanel" rendered="{!renderFeedback}">
+ 
+    <div class="titleSection">
+    {!$Label.LiveChat_Post_Title}
+    </div>
+    
+    
+    <div class="subtitleSection">
+    {!$Label.LiveChat_Post_Subtitle}
+    </div>
+    
+    <div>
+    <div class="questionSection">{!$Label.LiveChat_Feedback_OverAllExperience}</div>
+    <apex:inputField value="{!lcf.Overall_Chat_Experience__c}" styleClass="inputSection"/>
+    </div>    
+    
+    <div>
+    <div class="questionSection">{!$Label.LiveChat_Feedback_ChatAgentExperience}</div>
+    <apex:inputField value="{!lcf.Experience_with_Chat_Agent__c}" styleClass="inputSection"/>
+    </div>
+    
+    <div>
+    <div class="questionSection">{!$Label.LiveChat_Feedback_AlternateContact}</div>
+        <apex:inputField value="{!lcf.Alternate_Contact_Method__c}" styleClass="inputSection"/>
+    </div>
+
+    <div>
+    <apex:commandButton value="{!$Label.LiveChat_Post_SubmitBtn}" styleclass="buttonSection" action="{!saveFeedback}" id="submitFeedbackLink" rerender="feedbackPanelParent"/>
+    </div>
+    
+</apex:outputPanel>
+</div>
+
+</td>
+<td class="tdImgSection">       
+    <apex:image id="insetImg" styleClass="postChatInsetImgSection" value="{!$Resource.Saint_Josephs_University_Chat_Inset}"/>
+</td>
+</tr>
+</table>
+
+<div>
+<apex:outputPanel id="errorMessages" rendered="{!renderErrorMessages}">
+   <div class="errorMessagesSection"> {!errorMessages} </div>   
+ </apex:outputPanel>
+</div>
+
+</apex:outputPanel>
+  
+       
+    
+    </apex:form>  
+
+</div>
+
+<div class="footerSection">
+</div>
+
+</apex:insert>
+
+</apex:page>

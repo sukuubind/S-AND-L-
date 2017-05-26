@@ -1,0 +1,8 @@
+<apex:page tabStyle="Opportunity" >
+	<apex:pageBlock title="Lead Submitted" mode="view">
+		The lead has been successfully submitted.<br/>
+		<apex:outputPanel rendered="{!$CurrentPage.parameters.id != 'null'}">
+			<a href='/{!$CurrentPage.parameters.id}'>Back</a>
+		</apex:outputPanel>
+	</apex:pageBlock>
+</apex:page>

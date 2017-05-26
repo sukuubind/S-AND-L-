@@ -1,0 +1,204 @@
+<apex:page controller="SRPBulkSMSSendController" tabStyle="smagicinteract__SM_Home__tab">
+<apex:includeScript value="/soap/ajax/15.0/connection.js"/>
+<apex:includeScript value="/soap/ajax/15.0/apex.js"/>
+<style type="text/css">
+        .custPopup{
+            background-color: white;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #E6E6E6;
+            z-index: 9999; 
+            padding:10px;
+            position: absolute;
+            width: 350px;
+            left:40%;
+            top:250px;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+
+</style>
+<script type="text/javascript">
+
+    onkeyup = (function(e){
+        if(e.which == 27){      
+            var popupDisplayVal = document.getElementById('{!$Component.formId.main.tstpopup}').style.display;
+            if(popupDisplayVal == "block")
+                document.getElementById('{!$Component.formId.main.tstpopup}').style.display = "none";
+        }
+    });
+    
+    function collapseSection(blockId){
+    
+        var divDisplayVal =  document.getElementById(blockId).style.display;
+        if(divDisplayVal == "block")
+            document.getElementById(blockId).style.display = "none";
+        if(divDisplayVal == "none")
+            document.getElementById(blockId).style.display = "block";
+    }
+        
+    function charaterCounter(){
+        var maxLimit = 700;
+        var txtField = document.getElementById("{!$Component.formId.main.textSection.SMSText}");
+        var currentCount =  txtField.value.length;
+        var remainingCharMsgDiv = document.getElementById("{!$Component.formId.main.textSection.charaterCountMsg.numberOfChars}");
+        var noOfCharMsg = remainingCharMsgDiv.innerHTML;
+        var remaingChars = 700;
+        var msg = "";
+        if(currentCount > maxLimit){
+            txtField.value = txtField.value.substring(0, maxLimit);
+            remaingChars = 0; 
+        }
+        else{
+            remaingChars = maxLimit - currentCount;
+        }
+        msg = "You can type maximum "+remaingChars+" characters.";
+        if(remaingChars == 0)
+            msg = "You have reached to the maximum charater limit of 700.";
+        remainingCharMsgDiv.innerHTML = msg;
+    }
+</script>
+
+<apex:form id="formId">
+<apex:pageBlock id="main" title="Compose New SMS for Selected Contacts" helpTitle="Help For this Page?" helpUrl="/apex/smagicinteract__SMSMagicHelp?from=BulkSendSMS" >
+
+<apex:pageMessages /><br/>
+<apex:pageBlockSection id="sectionSenderId" title="Sender Id" >
+    <apex:selectList size="1"  value="{!senderId}" disabled="{!disabledDropDown}">
+    <apex:selectOptions value="{!senderIds}"/>
+    </apex:selectList>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection id="sectionSenderName" title="Users" rendered="{!showUserDropDown}">
+    <apex:selectList size="1"  value="{!userId}">
+    <apex:selectOptions value="{!senderList}"/>
+    </apex:selectList>
+</apex:pageBlockSection>
+  
+<apex:pageBlockSection columns="2" title="" id="sectionSelectedNumbers">    
+    <apex:pageBlockTable value="{!smsObjectList}" var="item">
+        <apex:column value="{!item['Name']}">
+            <apex:facet name="header">Name</apex:facet>
+        </apex:column>
+        <apex:column value="{!item['Phone']}">
+            <apex:facet name="header">Phone</apex:facet>
+        </apex:column>
+        <apex:column value="{!item['ObjectType']}">
+            <apex:facet name="header">ObjectType</apex:facet>
+        </apex:column>
+    </apex:pageBlockTable>
+</apex:pageBlockSection>
+
+
+<apex:pageBlockSection title="Selected Numbers" id="sectionTemplates">
+    <apex:selectList value="{!template}" size="1" title="Choose a template" onchange="sayHello();">
+       <apex:selectOptions value="{!items}"/>
+    </apex:selectList>
+</apex:pageBlockSection> 
+
+<apex:outputPanel id="tstpopup" style="display:block;">
+    <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+    <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}"  >
+       <div id="popupMessageHeader" style="width:100%; height:10%; background-color:#8BBEC1;">
+                <div title="Message Dialog" style="color:white; text-align:left; font-family:sans-serif; font-weight:bold; vertical-align: middle; padding-top: 5px; padding-bottom: 5px; padding-left: 5px;">Error Message</div> 
+       </div> 
+       <br /><br />
+       <apex:outputPanel style="font-size:15px;">
+               {!popupMessage} <br/><br/><br/>
+       </apex:outputPanel>
+       <apex:outputPanel style="margin-left:40%">
+                <apex:commandButton title="Close" value="Close" action="{!closePopup}" rerender="tstpopup" rendered="{!IF (showCancel, false, true)}"/>
+                <apex:commandButton title="Cancel SMS" value="Close" action="{!cancelSMS}" rerender="tstpopup" rendered="{!showCancel}"/>
+       </apex:outputPanel>
+    </apex:outputPanel>
+</apex:outputPanel>
+
+<apex:actionFunction name="sayHello" action="{!changeTemplateText}" rerender="textSection" oncomplete="charaterCounter();"/>
+
+<apex:pageBlockSection id="textSection" columns="2" title="SMS Text" >
+    <apex:pageBlockSectionItem id="charaterCountMsg" >
+        <apex:outputText style="color:green;font-size:14px;" id="numberOfChars" value="You can type maximum 700 characters."></apex:outputText> 
+    </apex:pageBlockSectionItem>
+    <br/>   
+    <apex:outputPanel id="smsTextPanel" styleClass="requiredInput" layout="block">
+    <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+        <apex:inputTextArea id="SMSText"  style="width:400px;height:80px;" value="{!smsText}" onkeyup="charaterCounter();" />
+    </apex:outputPanel>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection id="optOut" columns="2" title="SMS Stats" onclick="collapseSection('{!$Component.formId.main.statusWiseDetails}');" />
+<apex:outputPanel id="statusWiseDetails" style="display:block;">
+<apex:outputPanel id="statusWiseDetailsDetails" style="color:#4A4A56;font-size:91%;font-weight:bold;">
+        {!smsStats}
+</apex:outputPanel>
+
+<div style="margin-left:310px;">
+    <apex:commandButton action="{!send}" value="Send" title="Send" disabled="{!IF (disableMe,true, false)}"/> &nbsp;&nbsp;&nbsp;&nbsp;
+    <apex:commandButton action="{!cancel}" value="Cancel" title="Cancel"/>
+</div>
+</apex:outputPanel>
+
+<apex:pageBlockSection id="dateAndTimeSection" columns="1" title="Schedule Date and Time" onclick="collapseSection('pageBlockSectionId');"/>
+
+<div id="pageBlockSectionId" style="display:block;">
+<table>
+<tr>
+    <td style="color:#4A4A56;font-size:91%;font-weight:bold;">
+        <apex:outputLabel value="Name" for="jobName"/>
+    </td>
+    <td>:</td>
+    <td>
+        <apex:outputPanel styleClass="requiredInput" layout="block"  style="margin-left:10px;">
+        <apex:outputPanel styleClass="requiredBlock" layout="block"/> 
+            <apex:inputText value="{!jobName}" id="jobName" maxlength="20"/>
+        </apex:outputPanel>
+    </td>
+</tr>
+
+<tr>
+    <td style="color:#4A4A56;font-size:91%;font-weight:bold;">
+        <apex:outputLabel value="Start Date" for="startDate"/>
+    </td>
+    <td>:</td>
+    <td>
+        <apex:outputPanel styleClass="requiredInput" layout="block"  style="margin-left:10px;">
+        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+            <apex:inputField id="startDate" value="{!startDateObj.smagicschedule__Date__c}"/>
+        </apex:outputPanel>
+    </td>
+</tr>
+
+<tr>
+    <td style="color:#4A4A56;font-size:91%;font-weight:bold;">
+        <apex:outputLabel value="Time" for="timeInHours"/>
+    </td>
+    <td>:</td>
+    <td> 
+        <apex:selectList id="timeInHours" value="{!timeInHours}" size="1"   style="margin-left:10px;">
+                 <apex:selectOptions value="{!hoursList}" />
+        </apex:selectList>
+        Hour &nbsp;&nbsp;
+        <apex:selectList id="timeInMinutes" value="{!timeInMinutes}" size="1">
+                 <apex:selectOptions value="{!minutesList}" />
+        </apex:selectList>
+        Minute &nbsp;&nbsp;
+    </td>
+</tr>
+</table>
+
+</div>
+<apex:pageBlockButtons location="bottom">
+    <apex:commandButton action="{!schedule}" value="Schedule" title="Schedule" disabled="{!IF (disableMe,true, false)}" rerender="tstpopup"/>
+</apex:pageBlockButtons>
+</apex:pageBlock> 
+</apex:form>
+</apex:page>

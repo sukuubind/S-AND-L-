@@ -1,0 +1,509 @@
+<!DOCTYPE html><!--HTML5 doctype-->
+<apex:page showHeader="false" sidebar="false" cache="false" controller="webscheduler_controller">
+<!-- Web Scheduler visualforce page created for web appt -->
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <title>Online Appointment Scheduler</title>
+        <link type="text/css" href="{!URLFOR($resource.jquerycss)} " rel="stylesheet" />  
+        <script type="text/javascript" src="{!URLFOR($resource.jqueryjs1)}"></script>
+        <script type="text/javascript" src="{!URLFOR($resource.jqueryjs2)}"></script>
+        <script type="text/javascript" src="{!URLFOR($resource.jscrollpanejs)}"></script>
+                <link type="text/css" href="{!URLFOR($resource.jscrollpanecss)} " rel="stylesheet" />  
+       <!-- <link type="text/css" href="{!URLFOR($resource.sjuwebschedulercss)} " rel="stylesheet" /> -->
+       <link type="text/css" href="{!URLFOR($resource[csspage])} " rel="stylesheet" />
+        <script type="text/javascript">
+            $(function(){       
+
+                $('#pane2').jScrollPane({ animateScroll:true, animateTo:true, animateInterval:40, animateStep:2, showArrows:false, scrollbarWidth:7, scrollbarMargin:10, arrowButtonSpeed:14, hidefocus:true});
+                $('#pane3').jScrollPane({ animateScroll:true, animateTo:true, animateInterval:40, animateStep:2, showArrows:false, scrollbarWidth:7, scrollbarMargin:10, arrowButtonSpeed:14, hidefocus:true});
+                $('#pane1').jScrollPane({ animateScroll:true, animateTo:true, animateInterval:40, animateStep:2, showArrows:false, scrollbarWidth:7, scrollbarMargin:10, arrowButtonSpeed:14, hidefocus:true});
+                $('#pane4').jScrollPane({ animateScroll:true, animateTo:true, animateInterval:40, animateStep:2, showArrows:false, scrollbarWidth:7, scrollbarMargin:10, arrowButtonSpeed:14, hidefocus:true});
+                 // this initialises the scrollBy and scrollTo links.
+                $('.scroll-to-pane2').bind(
+                    'click',
+                    function()
+                    {
+                $('#pane2')[0].scrollBy(parseInt($(this).attr('rel')));
+                        return false;
+                    }
+                );
+                $('.scroll-to-pane1').bind(
+                    'click',
+                    function()
+                    {
+                        $('#pane1')[0].scrollBy(parseInt($(this).attr('rel')));
+                        return false;
+                    }
+                );
+                $('.scroll-to-pane3').bind(
+                    'click',
+                    function()
+                    {
+                        $('#pane3')[0].scrollBy(parseInt($(this).attr('rel')));
+                        return false;
+                    }
+                );
+               $('.scroll-to-pane4').bind(
+                    'click',
+                    function()
+                    {
+                $('#pane4')[0].scrollBy(parseInt($(this).attr('rel')));
+                        return false;
+                    }
+                );
+        });
+var int = self.setInterval("clock()",1000);
+function clock()
+{
+    var isiPad = navigator.userAgent.match(/iPad/i) != null;
+    var tzone = (isiPad)? "":" EDT";    
+    var d,lsm, lso, n;
+     d = new Date();
+    lso = new Date();
+    lsm = new Date();
+    var off = d.getTimezoneOffset();
+    lsm.setMonth(3);
+    lsm.setDate(11);
+    lso.setMonth(11);
+    lso.setDate(4);
+    n = ((d < lsm) || (d >= lso)) ? 300 : 240;
+    d.setUTCMinutes(d.getUTCMinutes()+ (off - n));
+    
+    var v=d.toLocaleDateString();
+    var t=d.toLocaleTimeString();
+    var h=d.getHours()
+    if(h >= 12){
+     var n = "PM";
+    }
+    else{
+     var n = "AM";   
+    }
+    var v=d.toLocaleDateString();
+    var t=d.toLocaleTimeString();
+    document.getElementById("clock").innerHTML = "&emsp;<B> " +v +" "+ t + tzone +" </B> ";
+}
+        
+        </script>
+<!-- <apex:stylesheet value="{!URLFOR($Resource[csspage])}"/> -->
+</head>
+<body> 
+<apex:form id="webschedform">
+
+
+<apex:outputPanel id="firsttimelisting" rendered="{!newtime}">
+<div class="center">
+<div class="header"> <br/> </div>
+<div class="welcomearea">
+<center><h1>Online Appointment Scheduler</h1></center>
+<p>Welcome to the <apex:outputtext value=" {!schoolname}" /> online appointment scheduler. Please select your desired date and time from the available dates listed below. Once selected click confirm appointment to confirm your date and time. If you are unable to make any of the available dates listed, please contact our online admissions office at <apex:outputText value=" {!schoolphone}" />.</p>
+</div>
+<div class="bottomarea">
+
+    <div class="stdinfoarea">
+        <div class="stdinfotitle">Student Information</div>
+        <div class="stdinfotext">
+            <font class="sub">Name:</font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!oppfname}"/> <apex:outputtext value=" {!opplname}"/></font><br/><br/>
+            <font class="sub">Program: </font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!program}"/></font><br/><br/>
+            <font class="sub">Program Manager: </font>  <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!pmname} "/>  </font><br/><br/>
+           <!--  <apex:image id="profileImagetimenew" url="{!profileImageUrl}" /> -->
+            <br/><br/>
+        </div>
+    </div>
+    
+    <div class="apptarea">
+        
+        <div class="apptareatitle">
+            Schedule an Appointment
+            <div class="clock"> <div id="clock"></div> </div>
+        </div>
+        
+        <div class="apptareatext">
+            <div class="datetable-outer">
+                <div class="datetable-inner-contrast">
+                    <div class="fulldate">
+                        <font class="sub"><apex:outputtext value="{!firstdaydisplayA}" /></font><br/>
+                        <font class="subdate"><apex:outputtext value="{!firstdaydisplay}" /></font>
+                    </div>
+                    <div class="holder invisible">
+                        <div id="pane1" class="scroll-pane">
+                        <apex:outputPanel rendered="{!NOT(empty1)}">
+            <ul  class="datearea">
+                    <apex:repeat value="{!firsttimes}" var="date" id="theRepeat">
+                    <li class="datebutton">
+                    <apex:commandlink value="{!date}" action="{!datetimechosen}" rerender="thedisplayeddate" id="theValues">
+                    <apex:param name="inTime" value="{!date}"  assignTo="{!inTime}" />
+                    </apex:commandlink>
+                    </li>
+                    </apex:repeat>
+            </ul>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!empty1}">
+                            There are no times available with your program manager for this date.
+                        </apex:outputPanel>   
+                        </div>
+                    </div>
+                     <div class="viewtext">
+                        <a class="scroll-to-pane1" rel="-28" href="#"><apex:image url="{!URLFOR($Resource.uparrow)}"/></a> <br/><br/> <a class="scroll-to-pane1" rel="29" href="#"><apex:image url="{!URLFOR($Resource.downarrow)}"/></a>
+                    </div> 
+                </div>
+            </div>
+            <div class="datetable-outer-second">
+                <div class="datetable-inner">
+                    <div class="fulldate">
+                        <font class="sub"><apex:outputtext value="{!seconddaydisplayA}" /></font><br/>
+                        <font class="subdate"><apex:outputtext value="{!seconddaydisplay}" /></font>
+                    </div>
+                    <div class="holder invisible">
+                        <div id="pane2" class="scroll-pane">
+                        <apex:outputPanel rendered="{!NOT(empty2)}">
+            <ul class="datearea">
+                <apex:repeat value="{!secondtimes}" var="date2" id="theRepeat3">
+                    <li class="datebutton"><apex:commandlink value="{!date2}" action="{!datetimechosen2}" id="theValues2" rerender="thedisplayeddate" >
+                    <apex:param name="inTime2" value="{!date2}"  assignTo="{!inTime2}"/>
+                    </apex:commandlink></li>
+                </apex:repeat>
+            </ul>     
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!empty2}">
+                            There are no times available with your program manager for this date.
+                        </apex:outputPanel>                    
+                        </div>
+                    </div>
+                     <div class="viewtext">
+                        <a class="scroll-to-pane2" rel="-28" href="#"><apex:image url="{!URLFOR($Resource.uparrow)}"/></a> <br/><br/> <a class="scroll-to-pane2" rel="29" href="#"><apex:image url="{!URLFOR($Resource.downarrow)}"/></a>
+                    </div> 
+                </div>
+            </div>
+                        <div class="datetable-outer-third">
+                <div class="datetable-inner-contrast">
+                    <div class="fulldate">
+                        <font class="sub"><apex:outputtext value="{!thirddaydisplayA}" /></font><br/>
+                        <font class="subdate"><apex:outputtext value="{!thirddaydisplay}" /></font>
+                    </div>
+                    <div class="holder invisible">
+                        <div id="pane3" class="scroll-pane">
+                        <apex:outputPanel rendered="{!NOT(empty3)}">
+            <ul class="datearea">
+                <apex:repeat value="{!thirdtimes}" var="date3" id="theRepeat4">
+                    <li class="datebutton"><apex:commandlink value="{!date3}" action="{!datetimechosen3}" rerender="thedisplayeddate" id="theValues3">
+                    <apex:param name="inTime3" value="{!date3}"  assignTo="{!inTime3}"/>
+                    </apex:commandlink></li>
+                </apex:repeat>
+            </ul>        
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!empty3}">
+                            There are no times available with your program manager for this date.
+                        </apex:outputPanel>             
+                        </div>
+                    </div>
+                     <div class="viewtext">
+                        <a class="scroll-to-pane3" rel="-28" href="#"><apex:image url="{!URLFOR($Resource.uparrow)}"/></a> <br/><br/> <a class="scroll-to-pane3" rel="29" href="#"><apex:image url="{!URLFOR($Resource.downarrow)}"/></a>
+                    </div> 
+                </div>
+            </div>
+            <div class="datetable-outer">
+                <div class="datetable-inner">
+                    <div class="fulldate">
+                        <font class="sub"><apex:outputtext value="{!fourthdaydisplayA}" /></font><br/>
+                        <font class="subdate"><apex:outputtext value="{!fourthdaydisplay}" /></font>
+                    </div>
+                    <div class="holder invisible">
+                        <div id="pane4" class="scroll-pane">
+                        <apex:outputPanel rendered="{!NOT(empty4)}">
+            <ul class="datearea">
+                <apex:repeat value="{!fourthtimes}" var="date4" id="theRepeat5">
+                    <li class="datebutton"><apex:commandlink value="{!date4}" action="{!datetimechosen4}" id="theValues4" rerender="thedisplayeddate" >
+                    <apex:param name="inTime4" value="{!date4}"  assignTo="{!inTime4}"/>
+                    </apex:commandlink></li>
+                </apex:repeat>
+            </ul>      
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!empty4}">
+                            There are no times available with your program manager for this date.
+                        </apex:outputPanel>
+                        </div>
+                    </div>
+                     <div class="viewtext">
+                        <a class="scroll-to-pane4" rel="-28" href="#"><apex:image url="{!URLFOR($Resource.uparrow)}"/></a> <br/><br/> <a class="scroll-to-pane4" rel="29" href="#"><apex:image url="{!URLFOR($Resource.downarrow)}"/></a>
+                    </div> 
+                </div>
+            </div>
+            <div class="confirmarea">
+            <apex:outputpanel id="thedisplayeddate">
+                <div class="displayarea">
+                    
+                    <p>
+                    <apex:outputtext styleClass="subdate" value="You have not selected a day and time for your appointment yet. Please select one of the times above." rendered="{!notime}"/><br/> 
+                    <apex:outputtext value="Your requested appointment is:" rendered="{!NOT(OR(isblank(beforeconfirm),isnull(beforeconfirm)))}"/>    
+                    </p>
+                    <apex:outputPanel rendered="{!NOT(OR(isblank(beforeconfirm),isnull(beforeconfirm)))}">
+                    <div class="fulldatedisplay">
+                    
+                        <apex:outputtext value="{!beforeconfirm}"  />
+                    
+                    </div>
+                    </apex:outputPanel>
+                     <p>
+                    <apex:outputtext value="If this is correct, please confirm." rendered="{!NOT(OR(isblank(beforeconfirm),isnull(beforeconfirm)))}"/>
+                     </p>
+                      
+                </div>
+                <div class="buttonarea">
+                    <apex:commandLink styleClass="confirmbutton" value="CONFIRM APPOINTMENT  >" action="{!newchooser}" rendered="{!NOT(OR(isblank(beforeconfirm),isnull(beforeconfirm)))}"/>
+                </div>
+                </apex:outputpanel>  
+            </div>
+            
+        </div>
+        
+        
+        
+    </div>
+</div>  
+</div>  
+</apex:outputpanel>
+
+<apex:outputPanel rendered="{!timehasbeenchosen}">
+<div class="center">
+<div class="header"> <br/> </div>
+<div class="welcomearea">
+</div>
+<div class="bottomarea">
+
+    <div class="stdinfoarea">
+        <div class="stdinfotitlecenter">Student Information</div>
+        <div class="stdinfotext">
+            <font class="sub">Name:</font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!oppfname}"/> <apex:outputtext value=" {!opplname}"/></font><br/><br/>
+            <font class="sub">Program: </font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!program}"/></font><br/><br/>
+            <font class="sub">Program Manager: </font>  <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!pmname} "/>  </font><br/><br/><!-- <apex:image id="profileImagetimechosen" url="{!profileImageUrl}" /> -->
+            <br/><br/>
+        </div>
+    </div>
+    
+    <div class="apptarea">
+        
+        <div class="apptareatitlecenter">
+            Your Appointment is Confirmed
+        </div>
+        <div class="apptareatextcenter">
+            <font class="apptsched">Thank you! Your appointment with <b><apex:outputtext value="{!pmname} "/></b> has been scheduled for:</font><br/><br/>           
+            <font class="apptdate"> <apex:outputText id="scheduleddate"  value="{!displaydate}"/> @ <apex:outputText style="padding:2px;" id="scheduledtime"  value="{!displaytime}"/> </font><br/><br/>  
+            <font class="appttext"> To cancel, change or create a new appointment, please click on the <b>Revise Appointment</b> link below.</font><br/><br/>    
+              <apex:commandLink styleClass="newbutton" target="_blank" action="{!icsfile}" value="Add this appointment to my calendar" id="theCommandLink"/><br/><br/>
+                 
+
+               <apex:commandlink value="REVISE APPOINTMENT" action="{!cancelAppointment}" id="cancellink" />
+              
+        </div>
+        
+        
+        
+    </div>
+</div>  
+</div>  
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!someoneelsechosetime}">
+ <div class="center">
+<div class="header"> <br/> </div>
+<div class="welcomearea">
+</div>
+<div class="bottomarea">
+
+    <div class="stdinfoarea">
+        <div class="stdinfotitlecenter">Student Information</div>
+        <div class="stdinfotext">
+            <font class="sub">Name:</font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!oppfname}"/> <apex:outputtext value=" {!opplname}"/></font><br/><br/>
+            <font class="sub">Program: </font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!program}"/></font><br/><br/>
+            <font class="sub">Program Manager: </font>  <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!pmname} "/>  </font><br/><br/><!-- <apex:image id="profileImagetimetryagain" url="{!profileImageUrl}" /> -->
+            <br/><br/>
+        </div>
+    </div>
+    
+    <div class="apptarea">
+        
+        <div class="apptareatitlecenter">
+            Your Scheduled Appointment
+        </div>
+        <div class="apptareatextcenter">
+  
+        <apex:outputtext styleClass="accent" value="Sorry, That Appointment is No Longer Available"/><br/><br/>
+        <apex:outputtext styleClass="appttext" value="Your requested appointment time has already been filled."/><br/>
+        <apex:outputtext styleClass="appttext" value="Please select another appointment."/><br/><br/>
+
+                <div class="newbuttonarea">
+                    <apex:commandlink styleclass="newbutton" value="Select A New Time >" action="{!chooseANewTime}" id="tryagainlink" /><apex:actionSupport event="onclick" rerender="firsttimelisting"/>
+                </div>
+            
+            
+        </div>
+        
+        
+        
+    </div>
+</div>  
+</div>  
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!chooseanothertime}">
+ <div class="center">
+<div class="header"> <br/> </div>
+<div class="welcomearea">
+</div>
+<div class="bottomarea">
+
+    <div class="stdinfoarea">
+        <div class="stdinfotitlecenter">Student Information</div>
+        <div class="stdinfotext">
+            <font class="sub">Name:</font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!oppfname}"/> <apex:outputtext value=" {!opplname}"/></font><br/><br/>
+            <font class="sub">Program: </font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!program}"/></font><br/><br/>
+            <font class="sub">Program Manager: </font>  <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!pmname} "/>  </font><br/><br/><!-- <apex:image id="profileImagetimecanceled" url="{!profileImageUrl}" />-->
+            <br/><br/>
+        </div>
+    </div>
+    
+    <div class="apptarea">
+        
+        <div class="apptareatitlecenter">
+            Your Appointment Has Been Canceled
+        </div>
+        <div class="apptareatextcenter">
+  
+        <!--<apex:outputtext styleClass="accent" value="Your Appointment has been Cancelled"/>--><br/>
+        <b><apex:outputtext styleClass="appttext" value="Would you like to schedule another appointment?"/></b><br/>
+       <!-- <b> <apex:outputtext styleClass="appttext" value="Please click on the link below to receive an updated list of times."/></b>--><br/>
+
+                <div class="newbuttonarea">
+                    <apex:commandlink styleclass="newbutton" action="{!chooseANewTime}" value="Schedule New Appointment" /><apex:actionSupport event="onclick" rerender="firsttimelisting"/><br/><br/>
+                    <apex:commandlink value="No thanks" action="{!nothankspageview}" id="nothx" /> 
+                </div>
+            
+            
+        </div>
+        
+        
+        
+    </div>
+</div>  
+</div>   
+</apex:outputPanel>
+
+
+<apex:outputPanel rendered="{!sorrypage}">
+ <div class="center">
+<div class="header"> <br/> </div>
+<div class="welcomearea">
+</div>
+<div class="bottomarea">
+
+    <div class="stdinfoarea">
+        <div class="stdinfotitlecenter">Student Information</div>
+        <div class="stdinfotext">
+            <font class="sub">Name:</font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!oppfname}"/> <apex:outputtext value=" {!opplname}"/></font><br/><br/>
+            <font class="sub">Program: </font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!program}"/></font><br/><br/>
+            <font class="sub">Program Manager: </font>  <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!pmname} "/>  </font><br/><br/><!-- <apex:image id="profileImagetimesorry" url="{!profileImageUrl}" /> -->
+            <br/><br/>
+        </div>
+    </div>
+    
+    <div class="apptarea">
+        
+        <div class="apptareatitlecenter">
+            Canceled Appointment
+        </div>
+        <div class="apptareatextcenter">
+  
+        <apex:outputtext styleClass="accent" value="Sorry you have decided not to reschedule."/><br/><br/>
+        <apex:outputtext styleClass="appttext" value="Please check again soon for additional appointment times."/><br/><br/><br/>
+         <apex:commandlink value="{!returntext}" target="_self" action="{!returnHome}" id="homepage" /> 
+            
+        </div>
+        
+        
+        
+    </div>
+</div>  
+</div>   
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!nonepage}">
+  <div class="center">
+<div class="header"> <br/> </div>
+<div class="welcomearea">
+<center><h1>Online Appointment Scheduler</h1></center>
+</div>
+<div class="bottomarea">
+
+    <div class="stdinfoarea">
+        <div class="stdinfotitlecenter">Student Information</div>
+        <div class="stdinfotext">
+            <font class="sub">Name:</font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!oppfname}"/> <apex:outputtext value=" {!opplname}"/></font><br/><br/>
+            <font class="sub">Program: </font> <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!program}"/></font><br/><br/>
+            <font class="sub">Program Manager: </font>  <br/><br/>
+            <font class="detailtxt"><apex:outputtext value="{!pmname} "/>  </font><br/><br/><!-- <apex:image id="profileImagetimefirsttime" url="{!profileImageUrl}" /> -->
+            <br/><br/>
+        </div>
+    </div>
+    
+    <div class="apptarea">
+        
+        <div class="apptareatitlecenter">
+            Schedule an Appointment
+        </div>
+        <div class="apptareatextcenter">
+        <apex:outputtext value="If you would like to request an appointment time, please click below to receive a list of available times."/><br/><br/>
+        <center><apex:commandbutton action="{!chooseANewTime}" value="Request Appointment" /></center>
+            
+        </div>
+        
+        
+        
+    </div>
+</div>  
+</div> 
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!errorsection}">
+<div class="center">
+   <div class="header"> <br/> </div>
+<div class="welcomearea">
+<br/><br/>
+</div>
+ <div class="bottomarea">
+  <div class="apptarea">
+        <div class="apptareatitlecenter">
+            Error:
+        </div>
+        
+        <div class="apptareatextcenter">
+        <p><apex:outputtext style="color:red;" value="{!pgmsg}"/></p>
+        <center><apex:commandbutton action="{!returntoPage}" value="BACK >" /></center>
+        </div>
+   </div>  
+ </div> 
+</div>
+</apex:outputPanel>
+
+</apex:form>   
+</body>
+</html>
+</apex:page>

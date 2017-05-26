@@ -1,0 +1,114 @@
+<apex:page showHeader="false" sidebar="false" title="Utica View" controller="UticaViewController">
+    <head>
+        <title>Utica View | Salesforce.com</title>
+       <!--  
+        <apex:includeScript value="{!URLFOR($Resource.jqueryUtica, '/js/jquery-1.9.1.js')}"  />
+        <apex:includeScript value="{!URLFOR($Resource.jqueryUtica, '/js/jquery-ui-1.10.3.custom.min.js')}"  />
+        <apex:stylesheet value="{!URLFOR($Resource.jqueryUtica, '/css/ui-lightness/jquery-ui-1.10.3.custom.css')}"  />
+        <script src="/EXT/ext-3.3.3/ext.js" type="text/javascript"></script>
+        <script src="/jslibrary/1360895802000/sfdc/AnalyticsFramework.js" type="text/javascript"></script>
+        <script src="/jslibrary/1360895802000/sfdc/DashboardViewDialog.js" type="text/javascript"></script>
+        <script src="/jslibrary/1365014448000/sfdc/DashboardView.js" type="text/javascript"></script>
+        <script>
+            jQuery.noConflict();
+        </script>
+   -->
+   
+    </head>
+    
+    <body>
+        <apex:outputPanel layout="block" style="float:right; padding:5px 30px 0 0;">
+            <apex:outputText value="Welcome, {!$User.FirstName} {!$User.LastName}" />
+            <apex:outputText value=" | " />
+            <apex:outputLink value="/secur/logout.jsp">Logout</apex:outputLink>
+        </apex:outputPanel>
+        <apex:tabPanel switchType="client" selectedTab="name1" id="theTabPanel">
+           <apex:tab label="Utica Deltak Dashboard" name="name1" id="tabOne">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://na26.salesforce.com/01Z32000000ir9v" scrolling="true" id="theIframe1" height="600px;" width="100%" />
+                </div>
+            </apex:tab>
+             <!-- <apex:tab label="{!$Label.Utica_Deltak_Term_Report_Tab_Heading}" name="name2" id="tabTwo">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://na26.salesforce.com/01Z60000000iciZ?isdtp=vw" scrolling="true" id="theIframe2" />
+                </div>
+            </apex:tab> -->
+             <apex:tab label="{!$Label.Utica_Dashboard_Tab_Label_1}" name="name6" id="tabSix">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://na26.salesforce.com/01Z32000000ir9w" scrolling="true" id="theIframe6" height="600px;" width="100%" />
+                </div>
+            </apex:tab>
+             <!--
+             <apex:tab label="Utica Fall B FY16 TERM" name="name7" id="tabSeven">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://na26.salesforce.com/01Z60000000ihxW" scrolling="true" id="theIframe7" />
+                </div>
+            </apex:tab> -->
+            <apex:tab label="{!$Label.Utica_Dashboard_Tab_Label_2}" name="name11" id="tabEleven">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://na26.salesforce.com/01Z32000000ir9x" scrolling="true" id="theIframe11" />
+                </div>
+            </apex:tab>
+            <apex:tab label="{!$Label.Utica_Dashboard_Tab_Label_3}" name="name10" id="tabTen">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://na26.salesforce.com/01Z32000000ir9y" scrolling="true" id="theIframe10" />
+                </div>
+            </apex:tab>
+         
+            <!--        
+            <apex:tab label="Utica Deltak TPS Report" name="name3" id="tabThree">
+                <div style="position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; width: 98%; height: 600px; background-color: #F0F8FF ; opacity:0.05; filter: alpha(opacity=5);"></div>
+                    <apex:iframe src="https://cs10.salesforce.com/00OJ0000000Ocbf?isdtp=vw" scrolling="true" id="theIframe3" />
+                </div>
+            </apex:tab>
+            -->
+           <apex:tab label="Utica Documents" name="name4" id="tabFour">
+                <apex:outputPanel layout="block" style="height:600px;">
+                    <table cellpadding="3" cellspacing="0" border="0" width="100%">
+                        <thead>
+                            <th style="width:25%; border-bottom:1px dashed black; border-right:1px dashed black;">Name</th>
+                            <th style="width:40%; border-bottom:1px dashed black; border-right:1px dashed black;">Description</th>
+                            <th style="width:5%; border-bottom:1px dashed black; border-right:1px dashed black;">Type</th>
+                            <th style="width:15%; border-bottom:1px dashed black; border-right:1px dashed black;">Created Date</th>
+                            <th style="width:15%; border-bottom:1px dashed black;">Last Modified Date</th>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!docList}" var="d">
+                                <tr>
+                                    <td valign="top">
+                                        <apex:outputLink value="/servlet/servlet.FileDownload?file={!d.Id}" target="_blank">
+                                            <apex:outputText value="{!d.Name}" />
+                                        </apex:outputLink>  
+                                    </td>
+                                    <td valign="top"><apex:outputField value="{!d.Description}" /></td>
+                                    <td valign="top"><apex:outputField value="{!d.Type}" /></td>
+                                    <td valign="top"><apex:outputField value="{!d.CreatedDate}" /></td>
+                                    <td valign="top"><apex:outputField value="{!d.LastModifiedDate}" /></td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody> 
+                    </table>
+                </apex:outputPanel>
+            </apex:tab>
+            
+            <apex:tab label="Utica Applicant Tracking" name="name9" id="tabNine">
+               <apex:include pagename="UticaApplicants"/>
+            </apex:tab>
+            
+            
+            <apex:tab label="Utica Inquiry Report" name="name8" id="tabEight">
+               <apex:include pagename="UticaInquiry"/>
+            </apex:tab> 
+            
+        </apex:tabPanel>
+       
+                
+    </body>
+</apex:page>

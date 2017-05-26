@@ -1,0 +1,342 @@
+<apex:page controller="RosterReport" showHeader="false" action="{!rosterReport}" >
+    <apex:sectionHeader title="Roster Report"/>
+    <apex:form >
+        <apex:pageBlock id="out">
+        	<apex:outputText rendered="{!IF(reportGenerated,false,true)}">
+        	<table>
+        		<tr>
+        			<td>
+        				<apex:selectList value="{!selectedTerms}" multiselect="true">
+			            	<apex:selectOptions value="{!terms}" />
+			            </apex:selectList>
+        			</td>
+        			<td>
+        				<apex:selectList value="{!selectedPrograms}" multiselect="true">
+			            	<apex:selectOptions value="{!programs}" />
+			            </apex:selectList>
+        			</td>
+        			<td>
+        				<apex:selectList value="{!selectedAccounts}" multiselect="true">
+			            	<apex:selectOptions value="{!accounts}" />
+			            </apex:selectList>
+        			</td>
+        			<td>
+        				Select 3 terms at most<br />
+        				Select a program<br />
+        				Select an Account<br />
+        			</td>
+        		</tr>
+        		<tr>
+        		</tr>
+        		<tr>
+        			<td>
+        				<apex:commandButton value="Generate Report" action="{!go}" rerender="out" />
+        			</td>
+        		</tr>
+        	</table>
+        	</apex:outputText>
+            <apex:outputPanel id="out" >
+           		<apex:pageMessages />
+           		<apex:outputText rendered="{!IF(reportGenerated,true,false)}">
+	            <table border="0" style="background-color:#838A8A">
+	                <tr>
+	                	<th></th>
+	                	<th></th>
+	                	<th></th>
+	                	<th></th>
+	                    <apex:repeat value="{!termBeanList}" var="termBean">
+	                        <th colspan="{!termBean.course.size}" style="text-align:center; background-color:#ACA9A6" >{!termBean.term}</th>
+	                    </apex:repeat>
+	                </tr>
+	                <tr>
+	                	<th style="text-align:center;">Student Name</th>
+	                	<th style="text-align:center;">Program Start</th>
+	                	<th style="text-align:center;">Advisor</th>
+	                	<th style="text-align:center;">No Enrollment Confirmation Date</th>
+	                    <apex:repeat value="{!termBeanList}" var="termBean">
+	                        <apex:repeat value="{!termBean.course}" var="termCourse">
+	                            <td style="text-align:center;background-color:#BFC4C4">{!termCourse.course}</td>
+	                        </apex:repeat>
+	                    </apex:repeat>
+	                </tr>
+	                <!-- 
+	                	
+	                 -->
+	                <apex:repeat value="{!studentBeans}" var="stuBean">
+	                	<apex:outputText rendered="{!stuBean.graduate}" >
+	                		<tr>
+								<apex:outputText rendered="{!IF(stuBean.dropFlag==true,true,false)}" >
+	                				<td style="text-align:center;background-color:#CC6666">{!stuBean.studentName}</td>
+	                			</apex:outputText>
+	                			<apex:outputText rendered="{!IF(stuBean.dropFlag==true,false,true)}" >
+	                				<td style="text-align:center;background-color:lightgreen">{!stuBean.studentName}</td>
+	                			</apex:outputText>
+								<td style="text-align:center;background-color:lightgreen">{!stuBean.programStart}</td>
+								<td style="text-align:center;background-color:lightgreen">{!stuBean.advisor}</td>
+								<td style="text-align:center;background-color:lightgreen">{!stuBean.noEnrollmentConfirmDate}</td>
+								<apex:repeat value="{!stuBean.courseStatuses}" var="status">
+									<apex:outputText rendered="{!IF(status.dropFlag==true,true,false)}" >
+										<td style="text-align:center;background-color:#CC6666">{!status.courseStatus}</td>
+									</apex:outputText>
+									<apex:outputText rendered="{!IF(status.dropFlag==true,false,true)}" >
+										<td style="text-align:center;background-color:lightgreen">{!status.courseStatus}</td>
+									</apex:outputText>
+									  
+								</apex:repeat>
+							</tr>
+	                	</apex:outputText>
+	                	<apex:outputText rendered="{!!stuBean.graduate}" >
+	                		<tr>  
+	                			<apex:outputText rendered="{!IF(stuBean.dropFlag==true,true,false)}" >
+	                				<td style="text-align:center;background-color:#CC6666">{!stuBean.studentName}</td>
+	                			</apex:outputText>
+	                			<apex:outputText rendered="{!IF(stuBean.dropFlag==true,false,true)}" >
+	                				<td style="text-align:center;background-color:white">{!stuBean.studentName}</td>
+	                			</apex:outputText>
+								<td style="text-align:center;background-color:white">{!stuBean.programStart}</td>
+								<td style="text-align:center;background-color:white">{!stuBean.advisor}</td>
+								<td style="text-align:center;background-color:white">{!stuBean.noEnrollmentConfirmDate}</td>
+								<apex:repeat value="{!stuBean.courseStatuses}" var="status">
+									<apex:outputText rendered="{!IF(status.dropFlag==true,true,false)}" >
+										<td style="text-align:center;background-color:#CC6666">{!status.courseStatus}</td>
+									</apex:outputText>
+									<apex:outputText rendered="{!IF(status.dropFlag==true,false,true)}" >
+										<td style="text-align:center;background-color:white">{!status.courseStatus}</td>
+									</apex:outputText>
+								</apex:repeat>
+							</tr>
+	                	</apex:outputText>
+				    </apex:repeat>
+				    <tr>
+	                	<th></th>
+	                	<th></th>
+	                	<th></th>
+	                	<th>Total Course Enrollments</th>
+	                	<apex:repeat value="{!termBeanList}" var="termBean">
+	                        <apex:repeat value="{!termBean.course}" var="termCourse">
+	                            <td style="text-align:center;background-color:#BFC4C4">{!termCourse.totalEnrollments}</td>
+	                        </apex:repeat>
+	                    </apex:repeat> 	
+	            	</tr> 
+	            	<tr>
+	                	<th></th>
+	                	<th></th>
+	                	<th></th>
+	                	<th>Total Credits</th>
+	                	<apex:repeat value="{!termBeanList}" var="termBean">
+	                        <apex:repeat value="{!termBean.course}" var="termCourse">
+	                            <td style="text-align:center;background-color:#BFC4C4">{!termCourse.totalCredits}</td>
+	                        </apex:repeat>
+	                    </apex:repeat>     
+	            	</tr>
+	            	<tr>
+	                	<th></th>
+	                	<th></th>
+	                	<th></th>
+	                	<th>Total Non-Deltak Credits</th>
+	                	<apex:repeat value="{!termBeanList}" var="termBean">
+	                        <apex:repeat value="{!termBean.course}" var="termCourse">
+	                            <td style="text-align:center;background-color:#BFC4C4">{!termCourse.totalNonDeltakCredits}</td>
+	                        </apex:repeat>
+	                    </apex:repeat>     
+	            	</tr>
+	            	<tr>
+	            		<th> </th>	
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Deltak New</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalNew}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Deltak Returning</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalReturning}</td>
+	            		</apex:repeat>
+	            	</tr>	            	
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Non-Deltak New</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalNewNonDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Non-Deltak Returning</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalReturningNonDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Re-Enters</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalReEnter}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Student Transfers</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalTransfer}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Deltak Drops</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalDrop}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Non-Deltak Drops</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalDropNonDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Deltak Grads</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalGrads}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Non-Deltak Grads</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalGradsNonDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Students</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalStudents}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Active Deltak Students</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalActiveDeltakStudents}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Active Non-Deltak Students</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalActiveNonDeltakStudents}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Course Enrollments</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalEnroll}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Deltak Course Enrollments</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalCourseEnrollments}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Non-Deltak Course Enrollments</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalEnrollNonDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Total Credits</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.totalCredits}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Average Credits per Student for Deltak</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.avgCreditLoadDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            	<tr>
+	            		<th></th>
+	            		<th></th>
+	            		<th></th>
+	            		<th>Average Credits per Student for Non-Deltak</th>
+	            		<apex:repeat value="{!termBeanList}" var="termBean">
+	            			<td colspan="{!termBean.course.size}" style="text-align:center;background-color:#BFC4C4">{!termBean.avgCreditLoadNonDeltak}</td>
+	            		</apex:repeat>
+	            	</tr>
+	            </table>
+            <br />
+            <!--  
+            <table>
+	            <apex:repeat value="{!statusBeanList}" var="statusBean">
+	            	<tr>
+	            		<td>{!statusBean.studentName}</td><td>{!statusBean.programStart}</td><td>{!statusBean.advisor}</td><td>{!statusBean.termName}</td><td>{!statusBean.courseName}</td><td>{!statusBean.status}</td>
+	            	</tr>
+	            </apex:repeat>
+            </table>
+            <table>
+            	<apex:repeat value="{!studentBeans}" var="stuBean">
+	            	<tr>
+	            		<td>{!stuBean.studentName}</td><td>{!stuBean.programStart}</td><td>{!stuBean.advisor}</td>
+	            		<apex:repeat value="{!stuBean.dropFlag}" var="drp">
+							<td style="text-align:center;">{!drp}</td>
+						</apex:repeat>
+	            	</tr>
+	            </apex:repeat>
+            </table>
+             -->
+            </apex:outputText>
+            </apex:outputPanel>
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>

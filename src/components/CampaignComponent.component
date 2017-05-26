@@ -1,0 +1,13 @@
+<apex:component allowDML="true"  controller="CampaignComonentController" >
+    <apex:attribute name="campaignId" description="" type="string" required="false" />
+    <apex:attribute name="campaignName" assignTo="{!campaignName}" description="" type="string" required="false" />
+    <apex:attribute name="campaignCode" assignTo="{!campaignCode}" description="" type="string" required="false" />
+    
+	<td>
+		<apex:inputText id="Friendly" value="{!friendlyName}" 
+			title="Leave this blank if you want to use the Campaign Name as the picklist value" />
+	</td>
+    <td>{!campaignName}</td> 
+    <td>{!campaignCode}</td>
+    <td><apex:commandButton Value="Add" action="{!add}"/> </td>
+</apex:component>

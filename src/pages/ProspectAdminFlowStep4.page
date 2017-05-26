@@ -1,0 +1,99 @@
+<apex:page standardcontroller="Account" extensions="ProspectAdminFlowController" showheader="false" sidebar="false">
+<apex:stylesheet value="{!URLFOR($Resource.ProspectToggleTeam)}"/>
+<c:ProspectHeader />
+<script>
+
+    function confirmCancel()
+    {
+        var isCancel = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to cancel?");
+        if (isCancel) 
+        {
+            window.top.close();
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        return false;
+    }
+    function confirmStartOver()
+    {
+        var isStart = confirm("All changes made have been saved till here. You can choose the same team and continue at a later time. Do you wish to start over?");
+        if (isStart) 
+        {
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        return false;
+    
+    }   
+    
+</script>   
+<apex:form id="step4Form">
+<apex:actionFunction name="setEqualAllocation" action="{!setEqualAllocation}" rerender="data"/>
+<apex:actionFunction name="userAllocation" action="{!userAllocation}" rerender="equalAlloc"/>
+<apex:actionFunction name="memStatus" action="{!flipMemberStatus}" rerender="fields"/>
+
+ <style>
+        tr.headerRow .TableTitle {
+            color: #818285 !important; 
+            font-size: 14px !important;
+        }
+ </style>
+    
+    <apex:pageBlock >
+        <c:ProspectPageHeader styleClass="pageHeader" stepValue="Step 4 of 4" required="true" acctName="{!acctName}" VFPageName="Step 4"/> <br/>
+        <apex:outputPanel styleClass="prospectText">
+        <apex:pageMessages rendered="{!isError}"/>
+        </apex:outputPanel>
+        
+        <div align="center">
+        <apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+                            onclick="return confirmStartOver()" immediate="true"/>  
+        <apex:commandButton action="{!step3}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&!createRule&&!isDefault)}"/>
+        <apex:commandButton action="{!editRule}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&createRule)}"/>
+        <apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&isDefault)}"/>
+        <apex:commandButton action="{!editRule}" value="Previous" styleClass="buttons" rendered="{!createTeam}"/>
+        <apex:commandButton action="{!editRule}" value="Previous" styleClass="buttons" rendered="{!cloneTeam}"/>
+        <apex:commandButton action="{!saveAll}" value="Save" styleClass="buttons"/>
+        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                                onclick="return confirmCancel()" immediate="true"/>
+        </div><br/>
+        
+        <div>
+            <h1><b> <apex:outputText value=" {!teamName}" styleClass="prospectText" style="font-size:16px; font-weight:bold"/>  </b></h1>
+        </div><br/>
+        <apex:outputPanel id="fields">
+        <apex:outputLabel styleclass="control-label" value="Allocate equally" />
+        <apex:inputCheckbox id="equalAlloc" value="{!eqAlloc}" onChange="setEqualAllocation();"/>
+        <apex:pageBlockTable id="data" value="{!memAllocList}" var="r">             
+                        <apex:column headerValue="Member Name" width="50px" value="{!r.memberName}" headerClass="TableTitle"></apex:column>
+                        <apex:column headerValue="Percentage Allocation" width="50px" headerClass="TableTitle">
+                            <apex:inputText styleClass="form-control" value="{!r.memberAllocation}" onChange="userAllocation();" maxLength="4" />
+                         </apex:column>
+                         <apex:column headerValue="Member Status" width="50px" value="{!r.status}" headerClass="TableTitle"></apex:column>
+                        <apex:column headerValue="Uncheck to Pause Assignment for Member in this Team" width="20px" headerClass="TableTitle">
+                        <apex:inputcheckbox value="{!r.memberStatus}" onChange="flipMemberStatus();" />
+                        </apex:column>
+        </apex:pageBlockTable>
+        </apex:outputPanel>
+        <div align="center">
+        <apex:commandButton action="{!step1}" value="Start Over" styleClass="buttons" 
+                            onclick="return confirmStartOver()" immediate="true"/>  
+        <apex:commandButton action="{!step3}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&!createRule&&!isDefault)}"/>
+        <apex:commandButton action="{!editRule}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&createRule)}"/>
+        <apex:commandButton action="{!step2Choose}" value="Previous" styleClass="buttons" rendered="{!(chooseTeam&&isDefault)}"/>
+        <apex:commandButton action="{!editRule}" value="Previous" styleClass="buttons" rendered="{!createTeam}"/>
+        <apex:commandButton action="{!editRule}" value="Previous" styleClass="buttons" rendered="{!cloneTeam}"/>
+        <apex:commandButton action="{!saveAll}" value="Save" styleClass="buttons"/>
+        <apex:commandButton action="{!cancel}" value="Cancel" styleClass="buttons"
+                                onclick="return confirmCancel()" immediate="true"/>
+        </div>
+    </apex:pageBlock>
+    
+</apex:form>
+</apex:page>

@@ -1,0 +1,12 @@
+<apex:page extensions="runleadbatch" standardcontroller="Lead"> 
+
+<apex:outputlabel value="{!$Label.IPEDS_Lead_batch_running}" rendered="{!showlabel}"/><br/><br/>
+<apex:outputlink value="{!backlink}" rendered="{!showlabel}"> {!$Label.Run_Batch_Back_Link} </apex:outputlink>
+
+<apex:form rendered="{!!showlabel}" >  
+
+<h2> {!$Label.IPEDS_Lead_batch_start_text} </h2> <br/><br/>
+<apex:commandButton action="{!RunBatch}" value="{!$Label.IPEDS_Lead_Batch_Update_Button_Text}" disabled="{!showlabel}"/>
+
+</apex:form>
+</apex:page>

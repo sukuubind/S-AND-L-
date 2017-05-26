@@ -1,0 +1,193 @@
+<apex:component >
+<apex:attribute name="styleClass" description="styleFortheLabel" type="String" required="true"/>
+<apex:attribute name="stepValue" description="Value to be displyed" type="String" required="true"/>
+<apex:attribute name="required" description="Is the field Required" type="Boolean" required="true"/>
+<apex:attribute name="acctName" description="styleFortheLabel" type="String" required="true"/>
+<apex:attribute name="VFPageName" description="name of the VF page calling this component" type="String" required="true"/>
+
+<style>
+.help-tip{
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    text-align: center;
+    background-color: #BCDBEA;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    line-height: 26px;
+    cursor: default;
+}
+
+.help-tip:before{
+    content:'?';
+    font-weight: bold;
+    color:#fff;
+}
+
+.help-tip:hover p{
+    display:block;
+    transform-origin: 100% 0%;
+
+    -webkit-animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
+
+}
+
+.help-tip p{    /* The tooltip */
+    display: none;
+    text-align: left;
+    background-color: #818285;
+    padding: 20px;
+    width: 500px;
+    position: absolute;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    right: -4px;
+    color: #FFF;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: normal;
+}
+
+.help-tip p:before{ /* The pointer of the tooltip */
+    position: absolute;
+    content: '';
+    width:0;
+    height: 0;
+    border:6px solid transparent;
+    border-bottom-color:#1E2021;
+    right:10px;
+    top:-12px;
+}
+
+.help-tip p:after{ /* Prevents the tooltip from being hidden */
+    width:100%;
+    height:40px;
+    content:'';
+    position: absolute;
+    top:-40px;
+    left:0;
+}
+
+/* CSS animation */
+
+@-webkit-keyframes fadeIn {
+    0% { 
+        opacity:0; 
+        transform: scale(0.6);
+    }
+
+    100% {
+        opacity:100%;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    0% { opacity:0; }
+    100% { opacity:100%; }
+}
+
+
+</style>
+
+<apex:outputPanel styleClass="{!styleClass}">
+            
+                <div>
+                    <apex:outputText value="{!acctName}" styleClass="{!styleClass}"/>
+                </div>
+        
+            
+            
+                <div align ="right">
+                    <apex:outputText value="PROspect Admin Flow" styleClass="{!styleClass}"/> <br/>
+                    <apex:outputText value="{!stepValue}" styleClass="{!styleClass}"/> 
+                    <div class="help-tip">
+                    <p>
+                    <apex:outputPanel rendered="{!VFPageName=='Step1'}">
+                    Step 1 of 4!<br/>
+This is your starting point. You can do several things in this page.<br/>
+You can choose to create a new team or work with an already existing team.<br/>
+    If you decide to create a new team, click the "Create Team" button and proceed further.<br/>
+    If you decide to work with the existing team, you should select a team to work with.<br/>
+    Click the "Select Team" button to modify the chosen team, add / remove members, edit rules and member allocations.<br/>
+    Click the "Clone" button to create a new team with the same team members as in the chosen team.<br/>
+    Click the "Delete" button to remove the chosen team in your view.<br/>
+    Click the "Choose as Default Team" to make the chosen team as your Catch All team.<br/>
+    NOTE: If none of the rules evaluate to true, Opportunities will be assigned to the Catch All team.<br/>
+    (You are not required to set a team as default. A Catch All team is already created for you.)<br/>
+    Click the "Cancel" button to close the window and exit the PROspect screens.<br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!VFPageName=='Step 2'}">
+        Step 2 of 4! <br/>
+        In this page, <br/>
+        You can set or change the name of team.<br/>
+        You can exempt this team from escalation. This feature will only function if you have already set up escalation rules.<br/>
+        You can add or remove team members to your team. Just check the box(s) next to the names.<br/>
+        Click the "Next" button to save the team members and move on to the next step.<br/>
+        Click the "Previous" button to go back.<br/>
+        Click the "Start Over" button to go all the way to Step 1.<br/>
+        Click the "Cancel" button to close the window and exit the PROspect screens.<br/>
+        
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!VFPageName=='Step 3'}">
+    Step 3 of 4!<br/>
+    In this page, <br/>
+    You can view the rule that was already set before for this team. <br/>
+    Click the "Edit Rule" button if you wish to make amends to this rule. <br/>
+    Click the "Previous" button to add/remove team members in this team. <br/>
+    Click the "Next" button to review allocation percentage for each team member in this team. <br/>
+    Click the "Start Over" button to go all the way to Step 1.<br/>
+    Click the "Cancel" button to close the window and exit the PROspect screens.<br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!VFPageName=='Step 4'}">
+    Step 4 of 4 !<br/>
+    You are almost done. <br/>
+    You will see all the members selected for this team in this page.<br/>
+    Set the allocation percentage for each team member. We suggest keep it to whole numbers or one decimal at the most.<br/>
+    Member status shows the status of that particular member in this team.<br/>
+    Each team member has a flag that you can flip if you wish to make that member inactive in this team only.<br/>
+    Click the "Previous" button to go back. <br/>
+    Click the "Save" button to save the allocation percentages of all the members as you see in this page. <br/>
+    Click the "Start Over" button to go all the way to Step 1.<br/>
+    Click the "Cancel" button to close the window and exit the PROspect screens.<br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!VFPageName=='RuleCreate'}">
+    Step 3 of 4! <br/>
+    In this page, <br/>
+    You set up a brand new rule for your team (or) you edit a pre-existing rule because you need to change it. <br/>
+    Set a Sequence number in the box provided. <br/>
+    We support several objects from which you can choose filters from. <br/>
+    We support several fields within those objects. (If you do not find a field you are looking for in the object, perhaps it is part of another supported object. If not, please reach out to SRP team.)<br/>
+    We support standard set of operators to work with. It is very intuitive, you will see.<br/>
+    Provide the value you want the rule to be evaluated and hit the "+" button. <br/>
+    The combination of all these together, we call it Rule Sets. <br/>
+    You will find, we pre-populated the first rule set for you, which is a filter for the partner name. <br/>
+    You can add several rule sets in to this rule. <br/>
+    Finally, you complete this step by setting up a formula the various rule sets should operate under. You will find a few handy examples provided for you.<br/>
+    The final section is a view only section to give you an idea of the various rules that exist for different teams. <br/>
+    Click the "Previous" button to go back. <br/>
+    Click the "Next" button to review allocation percentage for each team member in this team. <br/>
+    Click the "Start Over" button to go all the way to Step 1.<br/>
+    Click the "Cancel" button to close the window and exit the PROspect screens.<br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!VFPageName=='Review'}">
+    You are done !<br/>
+    In this page,<br/>
+    You see a summary of everything that just happened in a single glance.<br/>
+    You see the name of the team, the rule sets, the formula, the list of team members and their allocation percentage for this team.<br/>
+    Click the "Edit Team" button if upon review, you find errors.<br/>
+    Click the "Start Over" button to go all the way to Step 1.<br/>
+    Click the "Close" button to close the window and exit the PROspect screens.<br/>
+    </apex:outputPanel>
+
+
+</p>
+                    </div>
+                    </div>
+                
+            
+        </apex:outputPanel>
+</apex:component>

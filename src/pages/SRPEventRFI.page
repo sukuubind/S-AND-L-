@@ -1,0 +1,163 @@
+<apex:page controller="SRPEventRFIController" standardstylesheets="false" showheader="false">
+<apex:outputpanel id="theentireform">
+<apex:stylesheet value="{!URLFOR($Resource.RFICSS)}"/>
+
+<apex:outputPanel rendered="{!infoErrorOnly}">
+
+<div class="alert alert-success message infoM3" role="alert">
+<apex:pageMessages rendered="{!infoErrorOnly}"/>
+</div>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!NOT(validated)}">
+<span>
+<div class="message errorM3 alert alert-danger" role="alert">  
+<apex:pageMessages />
+
+</div>
+</span>
+</apex:outputPanel>
+
+
+<apex:form styleClass="form-horizontal"> 
+
+ <apex:actionFunction name="loadEventDates" action="{!loadEventDates}" rerender="dates"/>
+ <apex:outputPanel style="overflow:scroll;width:900px;" layout="block">
+  <apex:image url="https://c.na26.content.force.com/servlet/servlet.ImageServer?id=01560000000o7ok&oid=00D60000000JELK&lastMod=1333403687000" width="900"/> 
+ <br/>
+ <apex:outputPanel rendered="{!newLead}">
+    <apex:outputPanel id="pb">
+    <div class="form-group">
+        <apex:outputLabel styleclass="control-label col-xs-2" value="First Name" rendered="{!firstName.fieldRendered}" />
+        <apex:outputPanel styleClass="required" rendered="{!firstname.fieldrequired}">
+                    <apex:outputText value="*" rendered="{!firstname.fieldrequired}"/>
+        </apex:outputPanel>
+        <div class="col-xs-10">
+                <div class="row">
+                    <div class="col-xs-5">
+        <apex:inputText styleClass="form-control" value="{!firstName.fieldvalue}" rendered="{!firstName.fieldRendered}"/>
+                    </div>
+        
+        <apex:outputLabel styleclass="control-label col-xs-2" value="Last Name" rendered="{!lastName.fieldRendered}" />
+            <apex:outputPanel styleClass="required" rendered="{!lastName.fieldrequired}">
+                    <apex:outputText value="*" rendered="{!lastName.fieldrequired}"/>
+            </apex:outputPanel>
+                    <div class="col-xs-5">
+        <apex:inputText styleClass="form-control" value="{!lastName.fieldValue}" rendered="{!lastName.fieldRendered}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="form-group">
+        <apex:outputLabel styleclass="control-label col-xs-2" value="Email" rendered="{!email.fieldRendered}" />
+        <apex:outputPanel styleClass="required" rendered="{!email.fieldrequired}">
+                    <apex:outputText value="*" rendered="{!email.fieldrequired}"/>
+            </apex:outputPanel>
+            <div class="col-xs-10">
+                <div class="row">
+                    <div class="col-xs-5">
+        <apex:inputText styleClass="form-control" value="{!email.fieldValue}" rendered="{!email.fieldRendered}"/>
+                    </div>
+        
+        <apex:outputLabel styleclass="control-label col-xs-2" value="Phone" rendered="{!phone.fieldRendered}" />
+        <apex:outputPanel styleClass="required" rendered="{!phone.fieldrequired}">
+                    <apex:outputText value="*" rendered="{!phone.fieldrequired}"/>
+            </apex:outputPanel>
+                    <div class="col-xs-5">
+        <apex:inputText styleClass="form-control" value="{!phone.fieldValue}" rendered="{!phone.fieldRendered}"/>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        
+        <apex:outputPanel layout="block" styleclass="form-group" rendered="{!eventTypeMode}">
+                <apex:outputPanel id="venue">
+                <apex:outputLabel styleclass="control-label col-xs-2" value="Event Type" rendered="{!venueType.fieldRendered}" />
+                       <apex:outputPanel styleClass="required" rendered="{!venueType.fieldrequired}">
+                        <apex:outputText value="*" rendered="{!venueType.fieldrequired}"/>
+                    </apex:outputPanel>
+                        <div class="col-xs-4">
+                            <apex:selectlist styleClass="form-control" value="{!venueType.fieldValue}" size="1" id="venueType" rendered="{!venueType.fieldRendered}" onChange="loadEventDates();">
+                                <apex:selectOptions value="{!venueTypeList}"></apex:selectOptions>
+                            </apex:selectlist> 
+                        </div>
+                </apex:outputPanel>        
+                <apex:outputPanel id="dates">
+                <apex:outputLabel styleclass="control-label col-xs-2" value="Event Date" rendered="{!eventDate.fieldRendered}" />
+                       <apex:outputPanel styleClass="required" rendered="{!eventDate.fieldrequired}">
+                        <apex:outputText value="*" rendered="{!eventDate.fieldrequired}"/>
+                    </apex:outputPanel>
+                        <div class="col-xs-4">
+                            <apex:selectlist styleClass="form-control" value="{!eventDate.fieldValue}" size="1" id="eventDate" rendered="{!eventDate.fieldRendered}">
+                                <apex:selectOptions value="{!eventDateList}"></apex:selectOptions>
+                            </apex:selectlist> 
+                        </div>
+                </apex:outputPanel>
+        </apex:outputPanel>            
+
+        </apex:outputPanel>   
+       
+        
+        <apex:outputPanel id="term_major_id">
+        <apex:outputPanel layout="block" styleclass="form-group" rendered="{!intendedMajor.fieldRendered}">
+        
+        <div class="col-xs-2">
+            
+            <apex:outputLabel styleclass="control-label" value="Academic Program" rendered="{!intendedMajor.fieldRendered}">
+                <apex:outputPanel styleClass="required" rendered="{!intendedMajor.fieldRequired}">
+                    <apex:outputText value="*" rendered="{!intendedMajor.fieldRequired}"/>
+                </apex:outputPanel>
+            </apex:outputLabel>
+            
+            </div>
+
+        <div class="col-xs-5">
+        <apex:selectlist styleClass="form-control" value="{!intendedMajor.fieldValue}" size="1" id="intendedMajor" rendered="{!intendedMajor.fieldRendered}">
+            <apex:selectOptions value="{!intendedMajorList}"></apex:selectOptions>
+        </apex:selectlist> 
+            </div>
+        </apex:outputPanel> 
+         </apex:outputPanel> 
+        
+        </apex:outputPanel>
+    <apex:outputPanel id="naPanel">
+    
+ 
+ <br/>
+   <div class="form-group">
+    
+        <apex:outputPanel styleclass="col-xs-10 col-xs-push-2 text-center" id="submitButton" rendered="{!newLead}">
+<apex:actionStatus id="mySaveStatus1">
+         <apex:facet name="stop">
+             <apex:commandButton id="subBtn" styleClass="btn btn-warning" rerender="theentireform" value="Submit" action="{!saveLead}"  status="mySaveStatus1" /> 
+
+         </apex:facet>
+         <apex:facet name="start">
+             <apex:outputPanel >
+                   <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+                   <apex:commandButton value="Processing..." status="mySaveStatus1" disabled="true"/>
+               </apex:outputPanel>
+           </apex:facet>
+        </apex:actionStatus> 
+
+</apex:outputPanel>
+        
+        </div>
+ 
+ 
+ 
+ 
+ 
+ </apex:outputPanel>
+   <apex:image url="https://c.na26.content.force.com/servlet/servlet.ImageServer?id=015320000015psz&oid=00D60000000JELK&lastMod=1456856385000" width="900"/> 
+</apex:outputPanel>
+</apex:form>
+
+
+
+
+</apex:outputpanel>
+
+
+</apex:page>

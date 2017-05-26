@@ -1,0 +1,1 @@
+<apex:page standardController="Contact" recordSetVar="contacts" sidebar="false" extensions="getContactsByViewController" showHeader="false" contentType="text/plain">{!fld}</apex:page>
