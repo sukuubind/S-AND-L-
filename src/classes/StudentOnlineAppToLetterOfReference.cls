@@ -54,14 +54,16 @@ public class StudentOnlineAppToLetterOfReference {
             DeltakSRP__Student_Letter_of_Reference_Selection__c slrs = newMap.get(slrsId);
             if (slrs.DeltakSRP__Student_Online_Application__c != null && slrs.DeltakSRP__Student_Letter_of_Reference__c != null) {
                 DeltakSRP__Student_Letter_of_Reference__c slr = new DeltakSRP__Student_Letter_of_Reference__c(Id = slrs.DeltakSRP__Student_Letter_of_Reference__c);
-                if (StudentOnlineApplicationToSLR__c.getAll() != null) {
-                    for (StudentOnlineApplicationToSLR__c soaToslr : StudentOnlineApplicationToSLR__c.getAll().values()) {
+                if (slr.LOR_Waive_Selection_Signature__c == null && slr.LOR_Attestation_Signature__c == null && slr.I_waive_my_right_to_access_this_report__c == null) {
+                    if (StudentOnlineApplicationToSLR__c.getAll() != null) {
+                        for (StudentOnlineApplicationToSLR__c soaToslr : StudentOnlineApplicationToSLR__c.getAll().values()) {
 
-                        slr.put(soaToslr.Field_Name__c, sOAMap.get(slrs.DeltakSRP__Student_Online_Application__c).get(soaToslr.Field_Value__c));
-                        //  slr.Ferpa_Fields_On_SOA_Filled__c = true;
-                        System.debug ('ssoaToslr.Field_Name__c is   ' + soaToslr.Field_Name__c);
-                        System.debug('sOAMap.getslrs.DeltakSRP__Student_Online_Application__c.getsoaToslr.Field_Value__c ' + sOAMap.get(slrs.DeltakSRP__Student_Online_Application__c).get(soaToslr.Field_Value__c));
-                        sLRMapToUpdate.put(slr.Id, slr);
+                            slr.put(soaToslr.Field_Name__c, sOAMap.get(slrs.DeltakSRP__Student_Online_Application__c).get(soaToslr.Field_Value__c));
+                            //  slr.Ferpa_Fields_On_SOA_Filled__c = true;
+                            System.debug ('ssoaToslr.Field_Name__c is   ' + soaToslr.Field_Name__c);
+                            System.debug('sOAMap.getslrs.DeltakSRP__Student_Online_Application__c.getsoaToslr.Field_Value__c ' + sOAMap.get(slrs.DeltakSRP__Student_Online_Application__c).get(soaToslr.Field_Value__c));
+                            sLRMapToUpdate.put(slr.Id, slr);
+                        }
                     }
                 }
             }
